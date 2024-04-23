@@ -35,8 +35,13 @@ const routes: Array<RouteRecordRaw> = [
     component: BikeTags,
   },
   {
-    path: '/players/:currentPage?',
+    path: '/players',
     name: 'Players',
+    component: Players,
+  },
+  {
+    path: '/players/search',
+    name: 'Player Search',
     component: Players,
   },
   {
