@@ -39,7 +39,7 @@
 
 <script setup name="PlayersView">
 import { useBikeTagStore } from '@/store/index';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 // components
@@ -59,18 +59,7 @@ const searchBoxInput = ref(searchString.value)
 const store = useBikeTagStore()
 const { t } = useI18n()
 
-onMounted( async () => {
-  /* validate query params */
-  if (!perPageOptions.includes(String(perPage.value))) {
-    perPage.value = defaultQuery.perPage
-    router.replace({query: {...route.query, perPage: perPage.value}})
-    .then(resetPageNumber)
-  }
-  else if (isNaN(currentPage.value) ||
-      currentPage.value !== 1 && displayedPlayers.value.length === 0) {
-    resetPageNumber()
-  }
-})
+onMounted(() => validateQuery())
 
 // computed
 const getPlayers = computed(() => store.getPlayers)
@@ -148,5 +137,29 @@ const performSearch = () => {
     }}).then(resetPageNumber)
   }
 }
+const validateQuery = () => {
+  if (!perPageOptions.includes(String(perPage.value))) {
+    perPage.value = defaultQuery.perPage
+    router.replace({query: {...route.query, perPage: perPage.value}})
+    .then(resetPageNumber)
+  }
+  else if (isNaN(currentPage.value) ||
+      currentPage.value !== 1 && displayedPlayers.value.length === 0) {
+    resetPageNumber()
+  }
+}
 
+//watch
+watch(
+  () => route,
+  () => {
+    // reset all data that comes from the URL
+    currentPage.value = route.query?.currentPage ? parseInt(route.query?.currentPage) : 1
+    perPage.value = route.query?.perPage ? parseInt(route.query?.perPage) : defaultQuery.perPage
+    searchString.value = route.query?.searchString || ""
+    searchBoxInput.value = searchString.value
+    validateQuery()
+  },
+  { deep: true }
+);
 </script>
