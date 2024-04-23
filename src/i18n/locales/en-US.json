@@ -70,6 +70,11 @@
       "send_hello_email": "Send an email to ask about how you can start one!",
       "game_not_exists": "Uh, oh. Does this game not exist.. yet?"
     },
+    "players": {
+      "not_found": "no one by that name 'round here.",
+      "search": "Search",
+      "exit_search": "Back to All Players"
+    },
     "login":{
       "player": "BikeTag Player Login",
       "description": "The BikeTag Game doesn't require you to log in to play the game, but creating a login does give you the opportunity to secure your player name and prevent others from using it.",
