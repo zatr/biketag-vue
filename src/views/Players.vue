@@ -13,10 +13,10 @@
         <player-bicon size="md" :player="player" />
       </div>
     </div>
-    <p v-if="!searchResults.length">
+    <p v-if="!searchResults.length && searchString">
       {{ t('pages.players.not_found') }}
     </p>
-    <bike-tag-button v-if="route.name === 'Player Search'" @click="clearSearch">
+    <bike-tag-button v-if="route.name === 'Player Search'" @click="clearSearch" class="clear-search-button">
       {{ t('pages.players.exit_search') }}
     </bike-tag-button>
     <b-form-group>
@@ -27,10 +27,9 @@
       </select>
     </b-form-group>
     <b-pagination
-      v-model="currentPage"
+      model-value="currentPage"
       :total-rows="searchResults.length"
       :per-page="perPage"
-      aria-controls="itemList"
       align="center"
       @page-click="changePage"
     ></b-pagination>
