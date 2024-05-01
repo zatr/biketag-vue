@@ -30,8 +30,13 @@ const routes: Array<RouteRecordRaw> = [
     component: Home,
   },
   {
-    path: '/biketags/:currentPage?',
+    path: '/biketags',
     name: 'BikeTags',
+    component: BikeTags,
+  },
+  {
+    path: '/biketags/search',
+    name: 'BikeTag Search',
     component: BikeTags,
   },
   {

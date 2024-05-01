@@ -44,11 +44,17 @@ body {
 
   .search-bar {
     display: flex;
+    margin-bottom: 25px;
     .biketag__button {
       padding-inline: 15px;
       min-height: auto;
       background-size: contain;
+      color: $btn-primary-text-color;
     }
+  }
+
+  .clear-search-button {
+    color: $btn-primary-text-color;
   }
 
   @keyframes spin {
