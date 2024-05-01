@@ -72,8 +72,17 @@
     },
     "players": {
       "not_found": "no one by that name 'round here.",
+      "empty": "Players will show up here when they join!",
       "search": "Search",
-      "exit_search": "Back to All Players"
+      "exit_search": "Back to All Players",
+      "loading": "Loading Players"
+    },
+    "biketags": {
+      "not_found": "no tags matching that search.",
+      "empty": "Completed BikeTag Posts will show up here once round #1 has been found!",
+      "search": "Search",
+      "exit_search": "Back to All Tags",
+      "loading": "Loading Bike Tags"
     },
     "login":{
       "player": "BikeTag Player Login",
