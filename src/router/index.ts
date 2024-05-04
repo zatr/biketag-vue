@@ -50,8 +50,13 @@ const routes: Array<RouteRecordRaw> = [
     component: Players,
   },
   {
-    path: '/player/:name/:currentPage?',
+    path: '/player/:name',
     name: 'Player',
+    component: Player,
+  },
+  {
+    path: '/player/:name/search',
+    name: 'Player Tag Search',
     component: Player,
   },
   {

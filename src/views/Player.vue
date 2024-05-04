@@ -1,8 +1,5 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <loading v-if="tagsAreLoading" v-model:active="tagsAreLoading" :is-full-page="true">
-    <img class="spinner" src="@/assets/images/SpinningBikeV1.svg" alt="Loading..." />
-  </loading>
   <b-modal
     v-if="player && bikedex?.length"
     v-model="modal"
@@ -46,70 +43,49 @@
         </a>
       </div>
     </div>
-    <div>
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="totalCount"
-        :per-page="perPage"
-        aria-controls="itemList"
-        align="center"
-        @page-click="changePage"
-      ></b-pagination>
-      <div class="small-margin player-tags">
-        <div v-for="tag in tagsForList" :key="tag?.tagnumber">
-          <bike-tag
-            :key="tag?.tagnumber"
-            :tag="tag"
-            :show-player="false"
-            :found-tagnumber="tag?.tagnumber - 1"
-            :found-description="tag?.foundLocation"
-          />
+    <Searchable
+      item-type="player"
+      :items="player?.tags?.toReversed()"
+      :search-algo="playerTagSearch"
+      main-route="Player"
+      search-route="Player Tag Search"
+    >
+      <template #content="{ displayedItems }">
+        <div class="small-margin player-tags">
+          <div v-for="tag in displayedItems" :key="tag?.tagnumber">
+            <bike-tag
+              :key="tag?.tagnumber"
+              :tag="tag"
+              :show-player="false"
+              :found-tagnumber="tag?.tagnumber - 1"
+              :found-description="tag?.foundLocation"
+            />
+          </div>
         </div>
-      </div>
-      <b-form-group>
-        <select v-model="perPage" class="m-auto mb-2 form-select" @change="resetCurrentPage">
-          <option v-for="i in 3" :key="Math.pow(10, i)" :value="Math.pow(10, i)">
-            {{ Math.pow(10, i) }}
-          </option>
-        </select>
-      </b-form-group>
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="totalCount"
-        :per-page="perPage"
-        aria-controls="itemList"
-        align="center"
-        @page-click="changePage"
-      ></b-pagination>
-    </div>
+      </template>
+    </Searchable>
   </div>
 </template>
 
 <script setup name="PlayerView">
-import { ref, computed, watch, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useBikeTagStore } from '@/store'
-import 'vue-loading-overlay/dist/css/index.css'
-import Reddit from '@/assets/images/Reddit.svg'
-import Instagram from '@/assets/images/Instagram.svg'
-import Twitter from '@/assets/images/Twitter.svg'
-import Imgur from '@/assets/images/Imgur.svg'
 import Discord from '@/assets/images/Discord.svg'
+import Imgur from '@/assets/images/Imgur.svg'
+import Instagram from '@/assets/images/Instagram.svg'
+import Reddit from '@/assets/images/Reddit.svg'
+import Twitter from '@/assets/images/Twitter.svg'
+import { useBikeTagStore } from '@/store'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 // components
+import BikeDex from '@/components/BikeDex.vue'
+import BikeTag from '@/components/BikeTag.vue'
 import BikeTagAchievement from '@/components/BikeTagAchievement.vue'
 import PlayerBicon from '@/components/BikeTagPlayer.vue'
-import BikeTag from '@/components/BikeTag.vue'
-import Loading from 'vue-loading-overlay'
-import BikeDex from '@/components/BikeDex.vue'
+import Searchable from '@/components/Searchable.vue'
 
 // data
-const router = useRouter()
 const route = useRoute()
-const currentPage = ref(route.params?.currentPage.length ? parseInt(route.params?.currentPage) : 1)
-const perPage = ref(10)
-const tagsAreLoading = ref(false)
-// const tagsLoaded = ref([])
 const playerSocial = ref(null)
 const socialNetworkIcons = {
   reddit: Reddit,
@@ -133,32 +109,8 @@ const player = computed(() => store.getPlayers.find((p) => p.name === playerName
 // computed
 const bikedex = computed(() => [])
 const achievements = computed(() => player.value?.achievements?.map(store.getBikeTagAchievement))
-const tagsForList = computed(() => {
-  const tags = player.value?.tags.toReversed()
-  const start = (currentPage.value - 1) * perPage.value
-  const end = currentPage.value * perPage.value
-  return tags.slice(start, end)
-})
-const totalCount = computed(() => player.value?.tags?.length)
 
 // methods
-const resetCurrentPage = () => {
-  // startLoading()
-  currentPage.value = 1
-}
-const changePage = (event, pageNumber) => {
-  // startLoading()
-  router.push('/player/' + encodeURIComponent(playerName.value) + '/' + pageNumber)
-}
-// const startLoading = async () => {
-//   tagsLoaded.value = []
-//   tagsAreLoading.value = true
-//   if (perPage.value <= 10) {
-//     setTimeout(() => {
-//       tagsAreLoading.value = false
-//     }, 500)
-//   }
-// }
 const showBikeDex = () => {
   modal.value = true
   // console.log(modal)
@@ -167,14 +119,42 @@ const showBikeDex = () => {
 //   modal.value = false
 //   console.log(modal)
 // }
+const playerTagSearch = (tags, searchString) => {
+  const query = searchString.toLowerCase()
 
-// watch
-watch(
-  () => route.params.currentPage,
-  (val) => {
-    currentPage.value = Number(val)
-  },
-)
+  const searchedNumber = parseInt(query.match(/^#?(\d+)$/)?.[1])
+  const foundByNumber = []
+
+  const splitQuery = query.split(/\s+/)
+  const tagToScore = new Map()
+  for (const tag of tags) {
+    if (
+      searchedNumber &&
+      !foundByNumber.length &&
+      [searchedNumber, searchedNumber + 1].includes(tag.tagnumber)
+    ) {
+      foundByNumber[0] = tag
+      continue
+    }
+
+    const stringToMatch = tag.hint?.toLowerCase() + tag.foundLocation?.toLowerCase()
+    let score = 0
+    if (stringToMatch.includes(query)) {
+      score++
+    }
+    for (const word of splitQuery) {
+      if (stringToMatch.includes(word)) {
+        score++
+      }
+    }
+    tagToScore.set(tag, score)
+  }
+
+  const sortedResults = tags
+    .filter((tag) => tagToScore.get(tag) > 0)
+    .toSorted((a, b) => tagToScore.get(a) - tagToScore.get(b))
+  return foundByNumber.concat(sortedResults)
+}
 
 // mounted
 onMounted(async () => {
