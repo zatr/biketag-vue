@@ -10,11 +10,10 @@
 </template>
 
 <script setup name="ServiceWorker">
-import { computed } from 'vue'
+import { debug, getSanityImageResizedSize } from '@/common'
 import { useBikeTagStore } from '@/store/index'
 import { useRegisterSW } from 'virtual:pwa-register/vue'
-import { getSanityImageResizedSize } from '@/common/utils'
-import { debug } from '@/common/utils'
+import { computed } from 'vue'
 
 // props
 const props = defineProps({

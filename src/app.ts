@@ -27,7 +27,7 @@ import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'highlight.js/styles/monokai.css'
 import 'vue-toast-notification/dist/theme-sugar.css'
-import { debug, isAuthenticationEnabled } from './common/utils'
+import { debug, isAuthenticationEnabled } from './common'
 
 class BikeTagApp {
   protected emitter

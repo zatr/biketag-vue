@@ -13,7 +13,7 @@ import {
   DomainInfo,
   deca,
   special,
-} from '../../src/common'
+} from '.'
 
 export const stringifyNumber = (n: number): string => {
   if (n < 20) return special[n]

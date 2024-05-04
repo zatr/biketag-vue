@@ -105,19 +105,19 @@
 </template>
 
 <script setup name="QueueApprove">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { stringifyNumber } from '@/common'
 import { useBikeTagStore } from '@/store/index'
-import { Controller, Pagination } from 'swiper/modules'
 import 'swiper/css/bundle'
-import { stringifyNumber } from '@/common/utils'
+import { Controller, Pagination } from 'swiper/modules'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 // components
-import { Swiper, SwiperSlide } from 'swiper/vue'
 import BikeTag from '@/components/BikeTag.vue'
-import BikeTagQueue from '@/components/BikeTagQueue.vue'
 import BikeTagButton from '@/components/BikeTagButton.vue'
+import BikeTagQueue from '@/components/BikeTagQueue.vue'
+import { Swiper, SwiperSlide } from 'swiper/vue'
 
 // data
 const emit = defineEmits(['submit'])

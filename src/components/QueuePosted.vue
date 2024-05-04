@@ -1,8 +1,8 @@
 <script setup name="QueuePosted">
-import { ref, computed, onMounted, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
+import { debug } from '@/common'
 import { useBikeTagStore } from '@/store/index'
-import { debug } from '@/common/utils'
+import { computed, nextTick, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 // components
 import BikeTagButton from '@/components/BikeTagButton.vue'

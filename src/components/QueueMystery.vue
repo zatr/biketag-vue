@@ -95,12 +95,12 @@
 </template>
 
 <script setup name="QueueMysteryTag">
-import { ref, inject, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ordinalSuffixOf } from '@/common'
 import { useBikeTagStore } from '@/store/index'
-import { ordinalSuffixOf } from '@/common/utils'
 import exifr from 'exifr'
+import { computed, inject, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 // import heic2any from 'heic2any';
 
 // components

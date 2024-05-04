@@ -1,13 +1,13 @@
 import { Handler } from '@netlify/functions'
-import { getDomainInfo } from '../src/common/utils'
-import { ErrorMessage, HttpStatusCode } from './common/constants'
+import { getDomainInfo } from '../src/common'
 import {
   acceptCorsHeaders,
   getBikeTagAuth0Profile,
   getBikeTagPlayerProfile,
   getProfileAuthorization,
   handleAuth0ProfileRequest,
-} from './common/methods'
+} from './common'
+import { ErrorMessage, HttpStatusCode } from './common/constants'
 
 const profileHandler: Handler = async (event) => {
   /// Bailout on OPTIONS requests

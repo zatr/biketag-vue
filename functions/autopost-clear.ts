@@ -1,13 +1,13 @@
 import { Handler } from '@netlify/functions'
 import BikeTagClient from 'biketag'
 import { Game } from 'biketag/dist/common/schema'
-import { HttpStatusCode } from './common/constants'
 import {
   archiveAndClearQueue,
   getActiveQueueForGame,
   getBikeTagClientOpts,
   isRequestAllowed,
-} from './common/methods'
+} from './common'
+import { HttpStatusCode } from './common/constants'
 import { BackgroundProcessResults } from './common/types'
 
 export const autoClearQueue = async (event): Promise<BackgroundProcessResults> => {

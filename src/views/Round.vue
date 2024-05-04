@@ -28,11 +28,11 @@
 </template>
 
 <script setup name="QueueBikeTagView">
-import { ref, computed, onMounted } from 'vue'
-import { useBikeTagStore } from '@/store/index'
 import { BiketagQueueFormSteps } from '@/common/types'
+import { useBikeTagStore } from '@/store/index'
+import { computed, onMounted, ref } from 'vue'
 import { useTimer } from 'vue-timer-hook'
-// import { sendNetlifyForm, sendNetlifyError } from '@/common/utils'
+// import { sendNetlifyForm, sendNetlifyError } from '@/common'
 
 // components
 import QueueView from '@/components/QueueView.vue'

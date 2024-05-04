@@ -1,12 +1,12 @@
 import { Handler } from '@netlify/functions'
 import BikeTagClient from 'biketag'
 import { Game } from 'biketag/dist/common/schema'
-import { HttpStatusCode } from './common/constants'
 import {
-    getBikeTagClientOpts,
-    isRequestAllowed,
-    sendNewBikeTagNotifications,
-} from './common/methods'
+  getBikeTagClientOpts,
+  isRequestAllowed,
+  sendNewBikeTagNotifications,
+} from './common'
+import { HttpStatusCode } from './common/constants'
 import { BackgroundProcessResults } from './common/types'
 
 export const autoNotifyNewBikeTagPosted = async (event): Promise<BackgroundProcessResults> => {

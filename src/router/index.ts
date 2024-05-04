@@ -16,7 +16,7 @@ import Round from '@/views/Round.vue'
 import Worldwide from '@/views/Worldwide.vue'
 import { authGuard } from '@auth0/auth0-vue'
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
-import { debug, isAuthenticationEnabled } from '../common/utils'
+import { debug, isAuthenticationEnabled } from '../common'
 
 const routes: Array<RouteRecordRaw> = [
   {

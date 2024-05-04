@@ -2,7 +2,7 @@ import { builder, Handler } from '@netlify/functions'
 import { BikeTagClient } from 'biketag'
 import { getGamePayload } from 'biketag/dist/common/payloads'
 import request from 'request'
-import { getBikeTagClientOpts, getPayloadOpts } from './common/methods'
+import { getBikeTagClientOpts, getPayloadOpts } from './common'
 
 const gameHandler: Handler = async (event) => {
   const biketagOpts = getBikeTagClientOpts(

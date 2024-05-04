@@ -3,9 +3,9 @@ import axios from 'axios'
 import { BikeTagClient } from 'biketag'
 import { Game } from 'biketag/dist/common/schema'
 import request from 'request'
-import { getDomainInfo, getImgurImageSized } from '../src/common/utils'
+import { getDomainInfo, getImgurImageSized } from '../src/common'
+import { getBikeTagClientOpts, getPayloadOpts } from './common'
 import { HttpStatusCode } from './common/constants'
-import { getBikeTagClientOpts, getPayloadOpts } from './common/methods'
 
 const currentTagHandler = async (event) => {
   const biketagOpts = getBikeTagClientOpts(

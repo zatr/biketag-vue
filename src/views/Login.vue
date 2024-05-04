@@ -1,10 +1,10 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup name="LoginView">
-import { inject, computed } from 'vue'
-import { useBikeTagStore } from '@/store/index'
-import { isAuthenticationEnabled } from '@/common/utils'
-import { useAuth0 } from '@auth0/auth0-vue'
 import BikeTagSvg from '@/assets/images/BikeTag.svg'
+import { isAuthenticationEnabled } from '@/common'
+import { useBikeTagStore } from '@/store/index'
+import { useAuth0 } from '@auth0/auth0-vue'
+import { computed, inject } from 'vue'
 
 // components
 import BikeTagButton from '@/components/BikeTagButton.vue'

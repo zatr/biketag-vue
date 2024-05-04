@@ -108,25 +108,25 @@
 </template>
 
 <script setup name="QueueBikeTagView">
-import { ref, inject, computed, watchEffect, onMounted } from 'vue'
-import { useBikeTagStore } from '@/store/index'
-import { BiketagQueueFormSteps } from '@/common/types'
-import { useTimer } from 'vue-timer-hook'
-import { sendNetlifyForm, sendNetlifyError, dequeueErrorNotify } from '@/common/utils'
-import { useI18n } from 'vue-i18n'
-import LineSvg from '@/assets/images/line.svg'
 import ArrowSvg from '@/assets/images/arrow.svg'
+import LineSvg from '@/assets/images/line.svg'
+import { dequeueErrorNotify, sendNetlifyError, sendNetlifyForm } from '@/common'
+import { BiketagQueueFormSteps } from '@/common/types'
+import { useBikeTagStore } from '@/store/index'
+import { computed, inject, onMounted, ref, watchEffect } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useTimer } from 'vue-timer-hook'
 
 // components
-import Loading from 'vue-loading-overlay'
+import BikeTagButton from '@/components/BikeTagButton.vue'
+import BikeTagQueue from '@/components/BikeTagQueue.vue'
 import QueueFound from '@/components/QueueFound.vue'
-import QueueMystery from '@/components/QueueMystery.vue'
-import QueueSubmit from '@/components/QueueSubmit.vue'
 import QueueJoined from '@/components/QueueJoined.vue'
+import QueueMystery from '@/components/QueueMystery.vue'
 import QueuePosted from '@/components/QueuePosted.vue'
 import QueuePostedShare from '@/components/QueuePostedShare.vue'
-import BikeTagQueue from '@/components/BikeTagQueue.vue'
-import BikeTagButton from '@/components/BikeTagButton.vue'
+import QueueSubmit from '@/components/QueueSubmit.vue'
+import Loading from 'vue-loading-overlay'
 
 // props
 const props = defineProps({
