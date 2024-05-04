@@ -4,7 +4,7 @@
     <div class="search-bar">
       <b-form-input v-model="searchBoxInput" type="search" @keyup.enter="performSearch" />
       <bike-tag-button @click="performSearch">
-        {{ t(`pages.${itemType}.search`) }}
+        {{ t(`components.searchable.search`) }}
       </bike-tag-button>
     </div>
     <slot name="content" :displayed-items="displayedItems"></slot>
@@ -38,12 +38,7 @@
       {{ t(`pages.${itemType}.empty`) }}
     </span>
   </div>
-  <loading
-    v-if="loadingActive"
-    v-model:active="loadingActive"
-    :is-full-page="true"
-    @click="console.log(loadingActive)"
-  >
+  <loading v-if="loadingActive" v-model:active="loadingActive" :is-full-page="true">
     <img class="spinner" src="@/assets/images/SpinningBikeV1.svg" alt="Loading..." />
   </loading>
 </template>
@@ -101,7 +96,6 @@ const store = useBikeTagStore()
 onMounted(() => {
   validateQuery()
   setTimeout(() => {
-    console.log('not loading no more')
     reachedLoadingTimeout.value = true
   }, 1000)
 })
