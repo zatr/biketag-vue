@@ -57,8 +57,8 @@
 </template>
 
 <script setup name="BikeTagCamera">
-import { ref, onMounted } from 'vue'
-import { exportHtmlToDownload } from '@/common/utils'
+import { exportHtmlToDownload } from '@/common'
+import { onMounted, ref } from 'vue'
 
 const props = defineProps({
   title: {

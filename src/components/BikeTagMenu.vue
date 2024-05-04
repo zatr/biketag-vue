@@ -145,12 +145,12 @@
 </template>
 
 <script setup name="BikeTagMenu">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useAuth0 } from '@auth0/auth0-vue'
-import { useRouter, useRoute } from 'vue-router'
-import { debug, isOnline, isAuthenticationEnabled } from '../common/utils'
-import { useBikeTagStore } from '../store/index'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
+import { debug, isAuthenticationEnabled, isOnline } from '../common'
+import { useBikeTagStore } from '../store/index'
 
 // components
 import BikeTagButton from './BikeTagButton.vue'

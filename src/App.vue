@@ -10,8 +10,8 @@
     <meta property="og:image" :content="logo" />
   </Head>
   <div :class="isWhiteBackground">
-    <div :class="`spacer-top ${isWhiteBackground}`"></div>
-    <bike-tag-menu variant="top" />
+    <div :class="`${isNotLanding ? 'spacer-top' : 'spacer-less'} ${isWhiteBackground}`"></div>
+    <bike-tag-menu v-if="isNotLanding" variant="top" />
     <confetti-explosion v-if="showConfetti" />
     <service-worker />
     <router-view />
@@ -23,12 +23,12 @@
 </template>
 
 <script setup name="App">
-import { ref, inject, computed, onMounted, watch, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
 import { useBikeTagStore } from '@/store/index'
 import { useAuth0 } from '@auth0/auth0-vue'
-import { debug, isAuthenticationEnabled } from './common/utils'
+import { computed, inject, nextTick, onMounted, ref, watch } from 'vue'
 import ConfettiExplosion from 'vue-confetti-explosion'
+import { useRouter } from 'vue-router'
+import { debug, isAuthenticationEnabled } from './common'
 
 // componets
 import BikeTagMenu from '@/components/BikeTagMenu.vue'
@@ -188,6 +188,9 @@ created()
 
 .spacer-bottom {
   margin-bottom: 50px;
+}
+.spacer-less {
+  height: 0;
 }
 
 .spacer-top {

@@ -1,8 +1,8 @@
 import { Handler } from '@netlify/functions'
 import { BikeTagClient } from 'biketag'
 import request from 'request'
+import { acceptCorsHeaders, getBikeTagClientOpts, getPayloadAuthorization } from './common'
 import { HttpStatusCode } from './common/constants'
-import { acceptCorsHeaders, getBikeTagClientOpts, getPayloadAuthorization } from './common/methods'
 
 const tokenHandler: Handler = async (event) => {
   /// Bailout on OPTIONS requests

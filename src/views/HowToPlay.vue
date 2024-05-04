@@ -118,14 +118,14 @@
 // import Swiper core and required components
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 // Import Swiper styles
-import 'swiper/css/bundle'
-import { ref, computed } from 'vue'
+import { debug } from '@/common'
 import { useBikeTagStore } from '@/store/index'
-import { debug } from '@/common/utils'
+import 'swiper/css/bundle'
+import { computed, ref } from 'vue'
 
 // components
-import { Swiper, SwiperSlide } from 'swiper/vue'
 import BikeTagMap from '@/components/BikeTagMap.vue'
+import { Swiper, SwiperSlide } from 'swiper/vue'
 import { useI18n } from 'vue-i18n'
 
 // data

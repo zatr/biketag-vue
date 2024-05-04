@@ -14,13 +14,13 @@ import nodemailer from 'nodemailer'
 import { extname, join } from 'path'
 import qs from 'qs'
 import request from 'request'
-import { BikeTagProfile } from '../../src/common/types'
 import {
   getDomainInfo,
   getImgurImageSized,
   getTagDate,
   isAuthenticationEnabled,
-} from '../../src/common/utils'
+} from '../../src/common'
+import { BikeTagProfile } from '../../src/common/types'
 import { ErrorMessage, HttpStatusCode } from './constants'
 import { BackgroundProcessResults, activeQueue } from './types'
 

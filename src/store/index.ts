@@ -1,8 +1,10 @@
 import BikeTagClient from 'biketag'
 import { Achievement, Game, Player, Tag } from 'biketag/dist/common/schema'
 import { defineStore } from 'pinia'
-import { BikeTagDefaults, BikeTagStoreState, BiketagQueueFormSteps } from '../common'
 import {
+  BikeTagDefaults,
+  BikeTagStoreState,
+  BiketagQueueFormSteps,
   debug,
   encodeBikeTagString,
   getApiUrl,
@@ -16,7 +18,7 @@ import {
   getSanityImageUrl,
   getSupportedGames,
   setProfileCookie,
-} from '../common/utils'
+} from '../common'
 
 let client: BikeTagClient
 let gameName: string

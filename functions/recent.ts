@@ -3,7 +3,7 @@ import { BikeTagClient } from 'biketag'
 import { getTagsPayload } from 'biketag/dist/common/payloads'
 import { Game } from 'biketag/dist/common/schema'
 import request from 'request'
-import { getBikeTagClientOpts, getPayloadOpts } from './common/methods'
+import { getBikeTagClientOpts, getPayloadOpts } from './common'
 
 const recentHandler: Handler = async (event) => {
   const response = {

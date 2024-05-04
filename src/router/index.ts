@@ -16,7 +16,7 @@ import Round from '@/views/Round.vue'
 import Worldwide from '@/views/Worldwide.vue'
 import { authGuard } from '@auth0/auth0-vue'
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
-import { debug, isAuthenticationEnabled } from '../common/utils'
+import { debug, isAuthenticationEnabled } from '../common'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -30,18 +30,33 @@ const routes: Array<RouteRecordRaw> = [
     component: Home,
   },
   {
-    path: '/biketags/:currentPage?',
+    path: '/biketags',
     name: 'BikeTags',
     component: BikeTags,
   },
   {
-    path: '/players/:currentPage?',
+    path: '/biketags/search',
+    name: 'BikeTag Search',
+    component: BikeTags,
+  },
+  {
+    path: '/players',
     name: 'Players',
     component: Players,
   },
   {
-    path: '/player/:name/:currentPage?',
+    path: '/players/search',
+    name: 'Player Search',
+    component: Players,
+  },
+  {
+    path: '/player/:name',
     name: 'Player',
+    component: Player,
+  },
+  {
+    path: '/player/:name/search',
+    name: 'Player Tag Search',
     component: Player,
   },
   {

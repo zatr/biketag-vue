@@ -21,7 +21,7 @@
 </template>
 
 <script setup name="BikeDex">
-import { getTagDate } from '@/common/utils'
+import { getTagDate } from '@/common'
 
 // props
 const props = defineProps({

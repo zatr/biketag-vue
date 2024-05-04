@@ -135,20 +135,20 @@
 </template>
 
 <script setup name="QueueFoundTag">
-import { ref, inject, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
+import Pin from '@/assets/images/pin.svg'
+import { debug, isAuthenticationEnabled, isGmapsEnabled, isPointInPolygon } from '@/common'
 import { useBikeTagStore } from '@/store/index'
 import { useAuth0 } from '@auth0/auth0-vue'
-import { debug, isPointInPolygon, isAuthenticationEnabled, isGmapsEnabled } from '@/common/utils'
-import { useI18n } from 'vue-i18n'
 import exifr from 'exifr'
-import Pin from '@/assets/images/pin.svg'
+import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 // import heic2any from 'heic2any';
 
 // components
-import Loading from 'vue-loading-overlay'
 import BikeTagButton from '@/components/BikeTagButton.vue'
 import BikeTagInput from '@/components/BikeTagInput.vue'
 import BikeTagMap from '@/components/BikeTagMap.vue'
+import Loading from 'vue-loading-overlay'
 
 // props
 const props = defineProps({

@@ -2,15 +2,15 @@ import { Handler } from '@netlify/functions'
 import { BikeTagClient } from 'biketag'
 import { Game } from 'biketag/dist/common/schema'
 import request from 'request'
-import { HttpStatusCode } from './common/constants'
 import {
-    acceptCorsHeaders,
-    getActiveQueueForGame,
-    getBikeTagClientOpts,
-    getPayloadOpts,
-    getProfileAuthorization,
-    setNewBikeTagPost,
-} from './common/methods'
+  acceptCorsHeaders,
+  getActiveQueueForGame,
+  getBikeTagClientOpts,
+  getPayloadOpts,
+  getProfileAuthorization,
+  setNewBikeTagPost,
+} from './common'
+import { HttpStatusCode } from './common/constants'
 
 const approveHandler: Handler = async (event) => {
   /// Bailout on OPTIONS requests

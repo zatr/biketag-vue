@@ -84,13 +84,13 @@
 </template>
 
 <script setup name="BikeTagFooter">
-import { ref, computed, onBeforeUnmount, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
-import { useBikeTagStore } from '@/store/index'
-import HintIcon from '@/assets/images/hint-icon.svg'
 import CloseRounded from '@/assets/images/close-rounded.svg'
+import HintIcon from '@/assets/images/hint-icon.svg'
+import { exportHtmlToDownload } from '@/common'
+import { useBikeTagStore } from '@/store/index'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { exportHtmlToDownload } from '@/common/utils'
+import { useRouter } from 'vue-router'
 
 // componets
 import BikeTagButton from '@/components/BikeTagButton.vue'

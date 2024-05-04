@@ -1,9 +1,9 @@
 import { Handler } from '@netlify/functions'
 import BikeTagClient from 'biketag'
 import { Achievement, Game, Player, Tag } from 'biketag/dist/common/schema'
-import { getSupportedGames } from '../src/common/utils'
+import { getSupportedGames } from '../src/common'
+import { getBikeTagClientOpts } from './common'
 import { HttpStatusCode } from './common/constants'
-import { getBikeTagClientOpts } from './common/methods'
 import { BackgroundProcessResults } from './common/types'
 
 export const assignAchievements = async (): Promise<BackgroundProcessResults> => {

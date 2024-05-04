@@ -60,6 +60,9 @@
     },
     "games": {
       "games_title": "Featuring games from all over the world!"
+    },
+    "searchable": {
+      "search": "Search"
     }
   },
   "pages": {
@@ -69,6 +72,24 @@
       "mystery": "current Mystery Location to find",
       "send_hello_email": "Send an email to ask about how you can start one!",
       "game_not_exists": "Uh, oh. Does this game not exist.. yet?"
+    },
+    "players": {
+      "not_found": "no one by that name 'round here.",
+      "empty": "Players will show up here when they join!",
+      "exit_search": "Back to All Players",
+      "loading": "Loading Players"
+    },
+    "biketags": {
+      "not_found": "no tags matching that search.",
+      "empty": "Completed BikeTag Posts will show up here once round #1 has been found!",
+      "exit_search": "Back to All Tags",
+      "loading": "Loading Bike Tags"
+    },
+    "player": {
+      "not_found": "no tags for this player matching that search.",
+      "empty": "This player has no tags.",
+      "exit_search": "Back to All of This Player's Tags",
+      "loading": "Loading Tags"
     },
     "login":{
       "player": "BikeTag Player Login",

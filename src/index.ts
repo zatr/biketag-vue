@@ -1,8 +1,8 @@
 import { App, Plugin } from 'vue'
 
+import { getBikeTagClientOpts } from './common'
 import { BikeTagDefaults, BikeTagEnv } from './common/constants'
 import * as Types from './common/types'
-import { getBikeTagClientOpts } from './common/utils'
 import { BikeTagStore, initBikeTagStore, useBikeTagStore } from './store'
 
 import { dynamicFontDirective } from './directives'
