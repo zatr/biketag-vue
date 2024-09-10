@@ -729,6 +729,7 @@ export const archiveAndClearQueue = async (
   game?: Game | null,
   adminBiketag?: BikeTagClient,
   nonAdminBikeTag?: BikeTagClient,
+  noArchive = false,
 ): Promise<BackgroundProcessResults> => {
   const results: any = []
   let errors = false
@@ -747,7 +748,6 @@ export const archiveAndClearQueue = async (
   if (queuedTags.length && game) {
     const nonAdminBikeTagOpts = getBikeTagClientOpts(undefined, true)
     const gameName = game.name.toLocaleLowerCase()
-    console.log('archiving remaining queued tags', { game: gameName, queuedTags })
     nonAdminBikeTagOpts.game = gameName
     nonAdminBikeTagOpts.imgur.hash = game.queuehash
 
@@ -757,50 +757,67 @@ export const archiveAndClearQueue = async (
       nonAdminBikeTag.config(nonAdminBikeTagOpts, false)
     }
 
-    const currentBikeTag = (await adminBiketag.getTag({ limit: 1 })).data
-    for (const nonWinningTag of queuedTags) {
-      /// If there are remnants of tags from the currently posted biketag, don't archive them
-      if (
-        nonWinningTag.mysteryPlayer !== currentBikeTag?.mysteryPlayer &&
-        nonWinningTag.foundPlayer !== currentBikeTag?.mysteryPlayer
-      ) {
-        /* Archive using ambassador credentials (mainhash and archivehash are both ambassador albums) */
-        const archiveTagResult = await adminBiketag.archiveTag({
-          ...nonWinningTag,
-          archivehash: game.archivehash,
-        })
-        if (archiveTagResult.success) {
+    if (!noArchive) {
+      console.log('archiving remaining queued tags', { game: gameName, queuedTags })
+
+      const currentBikeTag = (await adminBiketag.getTag({ limit: 1 })).data
+      for (const nonWinningTag of queuedTags) {
+        /// If there are remnants of tags from the currently posted biketag, don't archive them
+        if (
+          nonWinningTag.mysteryPlayer !== currentBikeTag?.mysteryPlayer &&
+          nonWinningTag.foundPlayer !== currentBikeTag?.mysteryPlayer
+        ) {
+          /* Archive using ambassador credentials (mainhash and archivehash are both ambassador albums) */
+          const archiveTagResult = await adminBiketag.archiveTag({
+            ...nonWinningTag,
+            archivehash: game.archivehash,
+          })
+          if (archiveTagResult.success) {
+            results.push({
+              message: 'non-winning found image archived',
+              game: gameName,
+              tag: nonWinningTag,
+            })
+          } else {
+            // console.log({ archiveTagResult })
+            results.push({
+              message: 'error archiving non-winning found image',
+              game: gameName,
+              tag: nonWinningTag,
+            })
+            errors = true
+          }
+        }
+        /* delete using player credentials (queuehash is player album) */
+        const deleteArchivedTagFromQueueResult = await nonAdminBikeTag.deleteTag(nonWinningTag)
+        if (deleteArchivedTagFromQueueResult.success) {
           results.push({
-            message: 'non-winning found image archived',
+            message: 'non-winning tag deleted from queue',
             game: gameName,
             tag: nonWinningTag,
           })
         } else {
-          // console.log({ archiveTagResult })
+          // console.log({ deleteArchivedTagFromQueueResult })
           results.push({
-            message: 'error archiving non-winning found image',
+            message: 'error deleting non-winning tag from the queue',
             game: gameName,
             tag: nonWinningTag,
           })
-          errors = true
+          /// No error here?
         }
       }
-      /* delete using player credentials (queuehash is player album) */
-      const deleteArchivedTagFromQueueResult = await nonAdminBikeTag.deleteTag(nonWinningTag)
-      if (deleteArchivedTagFromQueueResult.success) {
+    } else {
+      // Just remove all tags from the queue
+      for (const queuedTag of queuedTags) {
+        const deletedTagResult = await nonAdminBikeTag.deleteTag(queuedTag)
+
         results.push({
-          message: 'non-winning tag deleted from queue',
+          message: deletedTagResult.success
+            ? 'tag deleted from queue'
+            : 'error deleting tag from the queue',
           game: gameName,
-          tag: nonWinningTag,
+          tag: queuedTag,
         })
-      } else {
-        // console.log({ deleteArchivedTagFromQueueResult })
-        results.push({
-          message: 'error deleting non-winning tag from the queue',
-          game: gameName,
-          tag: nonWinningTag,
-        })
-        /// No error here?
       }
     }
   }
