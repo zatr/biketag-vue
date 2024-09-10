@@ -20,6 +20,7 @@ export const autoClearQueue = async (event): Promise<BackgroundProcessResults> =
 
   let errors = false
   const forceClear = event.queryStringParameters.force === 'true'
+  const clearAll = event.queryStringParameters.all === 'true'
   let results: any = []
   const nonAdminBiketagOpts = getBikeTagClientOpts(event, true)
   const nonAdminBiketag = new BikeTagClient(nonAdminBiketagOpts)
@@ -43,23 +44,44 @@ export const autoClearQueue = async (event): Promise<BackgroundProcessResults> =
     }
   }
 
-  const { queuedTags } = await getActiveQueueForGame(game, adminBiketag)
+  if (clearAll) {
+    const allTags = (await nonAdminBiketag.getQueue({ game: adminBiketagOpts.game })).data
 
-  if (queuedTags.length) {
-    console.log('non-winning tag(s) found', { game, queuedTags })
-    const archiveAndClearQueueResults = await archiveAndClearQueue(
-      queuedTags,
-      game,
-      adminBiketag,
-      undefined,
-      true,
-    )
-    results = archiveAndClearQueueResults.results
-    errors = archiveAndClearQueueResults.errors
+    if (allTags.length) {
+      console.log('all tags found', { game, allTags })
+      const archiveAndClearQueueResults = await archiveAndClearQueue(
+        allTags,
+        game,
+        adminBiketag,
+        undefined,
+        true,
+      )
+      results = archiveAndClearQueueResults.results
+      errors = archiveAndClearQueueResults.errors
+    } else {
+      const nothingToDoMessage = 'no tags found'
+      console.log(nothingToDoMessage)
+      results.push(nothingToDoMessage)
+    }
   } else {
-    const nothingToDoMessage = 'no non-winning tags found'
-    console.log(nothingToDoMessage)
-    results.push(nothingToDoMessage)
+    const { queuedTags } = await getActiveQueueForGame(game, adminBiketag)
+
+    if (queuedTags.length) {
+      console.log('non-winning tag(s) found', { game, queuedTags })
+      const archiveAndClearQueueResults = await archiveAndClearQueue(
+        queuedTags,
+        game,
+        adminBiketag,
+        undefined,
+        forceClear,
+      )
+      results = archiveAndClearQueueResults.results
+      errors = archiveAndClearQueueResults.errors
+    } else {
+      const nothingToDoMessage = 'no non-winning tags found'
+      console.log(nothingToDoMessage)
+      results.push(nothingToDoMessage)
+    }
   }
 
   return {
