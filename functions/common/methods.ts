@@ -473,19 +473,19 @@ export const getPayloadAuthorization = async (event: any): Promise<any> => {
   switch (authorizationType) {
     case 'basic':
       authorizationString = authorizationString.substring(basic.length)
-      authProfile = getBasicAuthProfile(authorizationString)
+      authProfile = await getBasicAuthProfile(authorizationString)
       break
     case 'netlify':
       authorizationString = authorizationString.substring(client.length)
-      authProfile = getNetlifyAuthProfile(authorizationString)
+      authProfile = await getNetlifyAuthProfile(authorizationString)
       break
     case 'client':
       authorizationString = authorizationString.substring(client.length)
-      authProfile = getAuth0AuthProfile(authorizationString)
+      authProfile = await getAuth0AuthProfile(authorizationString)
       break
     case 'bearer':
       authorizationString = authorizationString.substring(bearer.length)
-      authProfile = getAuth0AuthProfile(authorizationString)
+      authProfile = await getAuth0AuthProfile(authorizationString)
       break
     default:
       authProfile = authorizationString?.length ? 'authorization type not supported' : null
