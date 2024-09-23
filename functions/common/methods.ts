@@ -470,7 +470,9 @@ export const getPayloadAuthorization = async (event: any): Promise<any> => {
   }
 
   /// DEBUG: uncomment to check incoming authorization credentials
-  // console.log({ orign: event.headers.authorization, authorizationType, authorizationString })
+  if (process.env.DEBUG_A) {
+    console.log({ orign: event.headers.authorization, authorizationType, authorizationString })
+  }
 
   switch (authorizationType) {
     case 'basic':
