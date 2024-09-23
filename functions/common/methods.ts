@@ -412,6 +412,7 @@ export const getPayloadAuthorization = async (event: any): Promise<any> => {
   const basic = 'Basic '
   const bearer = 'Bearer '
   const client = 'Client-ID '
+  let authProfile
 
   const authorizationType: string | null =
     authorizationString?.indexOf(basic) === 0
@@ -469,32 +470,39 @@ export const getPayloadAuthorization = async (event: any): Promise<any> => {
     }
   }
 
-  /// DEBUG: uncomment to check incoming authorization credentials
-  if (process.env.DEBUG_A) {
-    console.log({ orign: event.headers.authorization, authorizationType, authorizationString })
-  }
-
   switch (authorizationType) {
     case 'basic':
       authorizationString = authorizationString.substring(basic.length)
-      return getBasicAuthProfile(authorizationString)
+      authProfile = getBasicAuthProfile(authorizationString)
+      break
     case 'netlify':
       authorizationString = authorizationString.substring(client.length)
-      return getNetlifyAuthProfile(authorizationString)
+      authProfile = getNetlifyAuthProfile(authorizationString)
+      break
     case 'client':
       authorizationString = authorizationString.substring(client.length)
-      return getAuth0AuthProfile(authorizationString)
+      authProfile = getAuth0AuthProfile(authorizationString)
+      break
     case 'bearer':
       authorizationString = authorizationString.substring(bearer.length)
-      return getAuth0AuthProfile(authorizationString)
+      authProfile = getAuth0AuthProfile(authorizationString)
+      break
     default:
-      authorizationString = authorizationString?.length
-        ? 'authorization type not supported'
-        : authorizationString
+      authProfile = authorizationString?.length ? 'authorization type not supported' : null
       break
   }
 
-  return null
+  /// DEBUG: uncomment to check incoming authorization credentials
+  if (process.env.DEBUG_A) {
+    console.log({
+      orign: event.headers.authorization,
+      authorizationType,
+      authorizationString,
+      authProfile,
+    })
+  }
+
+  return authProfile
 }
 
 export const defaultLogo = '/images/BikeTag.svg'
