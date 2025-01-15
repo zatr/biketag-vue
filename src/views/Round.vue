@@ -27,7 +27,7 @@
   </div>
 </template>
 
-<script setup name="QueueBikeTagView">
+<script setup name="RoundView">
 import { BiketagQueueFormSteps } from '@/common/types'
 import { useBikeTagStore } from '@/store/index'
 import { computed, onMounted, ref } from 'vue'

@@ -37,14 +37,15 @@ export const ordinalSuffixOf = (n: number) => {
 }
 export const getBikeTagHash = (val: string): string => md5(`${val}${process.env.HOST_KEY}`)
 
-export const getImgurImageSized = (imgurUrl = '', size = 'm') =>
-  imgurUrl
-    .replace('.jpeg', `${size}.jpg`)
+export const getImgurImageSized = (imgurUrl = '', size = 'm') => {
+  return imgurUrl
     .replace('.jpg', `${size}.jpg`)
+    .replace('.jpeg', `${size}.jpg`)
     .replace('.gif', `${size}.gif`)
     .replace('.png', `${size}.png`)
     .replace('.webp', `${size}.webp`)
     .replace('.mp4', `${size}.mp4`)
+}
 
 export const getDomainInfo = (req: any): DomainInfo => {
   const nonSubdomainHosts = [
