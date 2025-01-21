@@ -91,7 +91,7 @@
       <form
         ref="queueError"
         name="post-tag-error"
-        action="api/post-tag-error"
+        action="post-tag-error"
         method="POST"
         data-netlify="true"
         data-netlify-honeypot="bot-field"
