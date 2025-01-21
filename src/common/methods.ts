@@ -213,7 +213,7 @@ export const getMostRecentlyViewedBikeTagTagnumber = (
 export const sendNetlifyError = function (
   message: any,
   then?: (value: Response) => Response | PromiseLike<Response>,
-  action = 'post-tag-error',
+  action = 'api/post-tag-error',
 ) {
   const body = new URLSearchParams({
     message,
