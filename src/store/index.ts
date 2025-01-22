@@ -323,8 +323,11 @@ export const useBikeTagStore = defineStore(BikeTagDefaults.store, {
         return client.queue({ cached: false }).then((d) => {
           if ((d as Tag[])?.length > 0) {
             const currentBikeTagQueue: Tag[] = (d as Tag[]).filter(
-              (t) => t.tagnumber >= this.currentBikeTag.tagnumber,
+              (t) =>
+                t.tagnumber > this.currentBikeTag.tagnumber ||
+                (t.tagnumber === this.currentBikeTag.tagnumber && !t.mysteryImageUrl),
             )
+
             /// Get the player queued tag by player id
             const [playerQueuedTag] = currentBikeTagQueue.filter(
               (t) => this.profile?.sub && t.playerId === this.profile.sub,
