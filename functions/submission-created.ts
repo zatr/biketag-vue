@@ -12,7 +12,6 @@ import {
 import { HttpStatusCode } from './common/constants'
 
 export const handler = async (event) => {
-  console.log({ event })
   const body = JSON.parse(event.body)
   const payload = body.payload
   let success = false

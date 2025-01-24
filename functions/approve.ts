@@ -39,6 +39,7 @@ const approveHandler: Handler = async (event) => {
   /// We can only provide profile data if the profile already exists (created by Auth0)
   if (profile?.sub && profile.sub === approvePayload.ambassadorId) {
     const { playerId, tagnumber } = approvePayload.tag
+    console.log('ambassador approving tag attempted')
 
     const nonAdminBiketagOpts = getBikeTagClientOpts(event as unknown as request.Request, true)
     const nonAdminBiketag = new BikeTagClient(nonAdminBiketagOpts)

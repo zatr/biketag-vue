@@ -1419,6 +1419,7 @@ export const setNewBikeTagPost = async (
     // console.log('updating current BikeTag with the winning tag found information', previousBikeTag)
     const currentBikeTagUpdateResult = await adminBiketag.updateTag(previousBikeTag)
 
+    console.log({ currentBikeTagUpdateResult })
     if (currentBikeTagUpdateResult.success) {
       results.push({
         message: 'current BikeTag updated',
@@ -1437,6 +1438,7 @@ export const setNewBikeTagPost = async (
 
     /************** SET NEW BIKETAG POST FROM QUEUE *****************/
     const newBikeTagUpdateResult = await adminBiketag.updateTag(newBikeTagPost)
+    console.log({ newBikeTagUpdateResult })
     if (newBikeTagUpdateResult.success) {
       results.push({
         message: 'new BikeTag posted',
