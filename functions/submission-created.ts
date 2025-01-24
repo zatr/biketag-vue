@@ -43,7 +43,7 @@ export const handler = async (event) => {
           } as unknown as request.Request,
           true,
           false,
-          { name: gameName.toLowercase() } as Game,
+          { name: gameName.toLowerCase() } as Game,
         )
         const adminBiketagOpts = getBikeTagClientOpts(
           {
@@ -52,7 +52,7 @@ export const handler = async (event) => {
           } as unknown as request.Request,
           true,
           true,
-          { name: gameName.toLowercase() } as Game,
+          { name: gameName.toLowerCase() } as Game,
         )
         /// TODO: fix whatever is wrong with the biketag-api interface
         const nonAdminBiketag = new BikeTagClient(nonAdminBiketagOpts)
