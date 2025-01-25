@@ -49,32 +49,41 @@ export const autoPostNewBikeTags = async (): Promise<BackgroundProcessResults> =
       }
       nonAdminBiketag.config(thisGameConfig)
       adminBiketag.config(thisGameConfig)
-      const activeQueue = await getActiveQueueForGame(game, adminBiketag)
+      const activeQueue = await getActiveQueueForGame(game, nonAdminBiketag)
 
       if (activeQueue.completedTags.length && activeQueue.timedOutTags.length === 0) {
         console.log('completed tags found but none timed out', { game, activeQueue })
       } else if (activeQueue.completedTags.length && activeQueue.timedOutTags.length) {
         const currentBikeTagResponse = await adminBiketag.getTag(undefined) // the "current" mystery tag to be updated from the main album
-        const currentBikeTag = currentBikeTagResponse.data
-        const autoSelectedWinningTag = getWinningTagForCurrentRound(
-          activeQueue.timedOutTags,
-          currentBikeTag,
-        )
-
-        if (autoSelectedWinningTag) {
-          console.log('winning tag found, setting new BikeTag post', {
-            game,
-            autoSelectedWinningTag,
-          })
-          const setNewBikeTagPostResults = await setNewBikeTagPost(
-            game,
-            autoSelectedWinningTag,
+        if (!currentBikeTagResponse.success) {
+          results = results.concat([
+            'queue for game ' + game.name + ' has completed tags in it',
+            'but, for some reason, the current biketag was not returned: ' + currentBikeTagResponse.status + '->' + (currentBikeTagResponse.error ?? currentBikeTagResponse.data),
+            'has imgur rate-limited us? Not using RapidAPI?',
+          ])
+          errors = true
+        } else {
+          const currentBikeTag = currentBikeTagResponse.data
+          const autoSelectedWinningTag = getWinningTagForCurrentRound(
+            activeQueue.timedOutTags,
             currentBikeTag,
-            adminBiketag,
-            nonAdminBiketag,
           )
-          results = results.concat(setNewBikeTagPostResults.results)
-          errors = setNewBikeTagPostResults.errors
+
+          if (autoSelectedWinningTag) {
+            console.log('winning tag found, setting new BikeTag post', {
+              game,
+              autoSelectedWinningTag,
+            })
+            const setNewBikeTagPostResults = await setNewBikeTagPost(
+              game,
+              autoSelectedWinningTag,
+              currentBikeTag,
+              adminBiketag,
+              nonAdminBiketag,
+            )
+            results = results.concat(setNewBikeTagPostResults.results)
+            errors = setNewBikeTagPostResults.errors
+          }
         }
       }
     }
