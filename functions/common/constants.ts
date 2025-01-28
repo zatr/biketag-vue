@@ -1,9 +1,37 @@
 export enum ErrorMessage {
+  /// Logic Errors
   NameTaken = 'profile name is already in use',
   ProfileInitialized = 'profile fields have already been initialized',
   InvalidRequestData = 'invalid request data',
   PatchFailed = 'profile update error',
   MethodNotAllowed = 'request method not allowed',
+  BikeTagNotPosted = 'error posting new BikeTag',
+  NotificationsNotSent = 'error sending notifications',
+  WinningTagNotDeleted = 'error deleting winning tag from queue',
+  QueueNotCleared = 'error clearing queue',
+  NonWinningTagNotArchived = 'error archiving non-winning found image',
+  NonWinningTagNotDeleted = 'error deleting non-winning tag from the queue',
+  QueuedTagNotDeleted = 'error deleting tag from the queue',
+  PlayerNotCreated = 'error creating the player profile',
+  ProfileNotRetrieved = 'error retrieving profile',
+  NoHtmlLoaded = 'no html was loaded',
+  AuthTypeNotSupported = 'authorization type not supported',
+  EmailNotConfigured = 'email is not configured',
+  ProfileNameNotSet = 'profile name not set, cannot create profile',
+  MissingAuthHeader = 'missing authorization header',
+  ProfileNotFound = 'no profile found',
+  
+  /// Generic Method Errors
+  getAuthManagementToken = 'getAuthManagementToken error',
+  sendEmail = 'sendEmail error'
+}
+
+export enum JSONModels {
+  ProfilePatchPlayer = 'profile.patch',
+  ProfilePatchAmbassador = 'profile.patch.ambassador',
+  ProfilePut = 'profile.put',
+
+
 }
 
 export enum InfoMessage {

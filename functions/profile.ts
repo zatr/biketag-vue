@@ -19,7 +19,7 @@ const profileHandler: Handler = async (event) => {
     }
   }
   /// If all else fails
-  let body: any = 'missing authorization header'
+  let body: any = ErrorMessage.MissingAuthHeader
   let statusCode: number = HttpStatusCode.Unauthorized
 
   /// Retrieves the authorization and profile data, if present
@@ -42,7 +42,7 @@ const profileHandler: Handler = async (event) => {
         if (profileFound) {
           body = await getBikeTagPlayerProfile(profileFound, authorized, true)
         } else {
-          body = 'no profile found'
+          body = ErrorMessage.ProfileNotFound
           statusCode = HttpStatusCode.NotFound
         }
       }
@@ -87,7 +87,7 @@ const profileHandler: Handler = async (event) => {
   }
 
   if (statusCode !== HttpStatusCode.Ok) {
-    console.log(statusCode + ' profile retrieval error', body)
+    console.log(statusCode + ' ' + ErrorMessage.ProfileNotRetrieved, body)
   }
 
   return {
