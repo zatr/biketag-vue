@@ -363,7 +363,6 @@ const changeLocation = (e) => {
 const setPlace = (e) => {
   gps.value['lat'] = round(e.geometry.location.lat())
   gps.value['lng'] = round(e.geometry.location.lng())
-  console.log('setPlace', { gps: gps.value })
   center.value = { ...gps.value }
   location.value = inputDOM.value.value.split(',')[0]
   if (isGpsDefault.value) {
@@ -467,7 +466,7 @@ const setImage = async (event) => {
 const calculateInBoundary = () => {
   // If the boundary is set
   if (boundary.value.type) {
-    isInBoundary.value = isPointInPolygon(boundary.value, gps.value, 100)
+    isInBoundary.value = isPointInPolygon(boundary.value, gps.value, getGame.value.region?.radius ?? 1000)
 
     if (!isInBoundary.value) {
       confirmInBoundary.value = true
@@ -490,6 +489,7 @@ watch(getPlayerName, (val) => {
 // mounted
 onMounted(function () {
   nextTick(async () => {
+    await store.isReady()
     const regionData = await store.getRegionPolygon(getGame.value.region)
     if (regionData) {
       boundary.value = regionData.geojson

@@ -110,37 +110,43 @@ export const useBikeTagStore = defineStore(BikeTagDefaults.store, {
           return
         }
 
-        const firstOfRegion = region.description.split(',')[0].toLowerCase()
-        const results = (
-          await client.plainRequest({
-            method: 'GET',
-            url: 'https://nominatim.openstreetmap.org/search',
-            params: {
-              q: region.description,
-              // postalcode: region.zipcode,
-              polygon_geojson: 1,
-              format: 'json',
-            },
+        const regionSplit = region.description.split(',')
+        if (regionSplit.length) {
+          const firstOfRegion = regionSplit[0].toLowerCase()
+          // const secondOfRegion = regionSplit.length > 1 ? regionSplit[1].toLowerCase() : null
+          const results = (
+            await client.plainRequest({
+              method: 'GET',
+              url: 'https://nominatim.openstreetmap.org/search',
+              params: {
+                q: region.description,
+                // postalcode: region.zipcode,
+                polygon_geojson: 1,
+                format: 'json',
+              },
+            })
+          ).data
+          const filteredResults = results.filter(
+            (v: any) =>
+              v?.type == 'administrative' ||
+              v?.type == 'postcode' ||
+              (v?.type == 'city' &&
+                v?.geojson?.coordinates?.length &&
+                v?.geojson.coordinates[0].length > 1),
+          )
+          const sortedResults = filteredResults.sort((v1: any, v2: any) => {
+            if (v2?.display_name.toLowerCase().indexOf(firstOfRegion) === 0) {
+              return 1
+            } else if (v1?.geojson?.type === 'Polygon' || v1?.geojson?.type === 'MultiPolygon') {
+              return -1
+            }
+            return 0
           })
-        ).data
-        const filteredResults = results.filter(
-          (v: any) =>
-            v?.type == 'administrative' ||
-            v?.type == 'postcode' ||
-            (v?.type == 'city' &&
-              v?.geojson?.coordinates?.length &&
-              v?.geojson.coordinates[0].length > 1),
-        )
-        const sortedResults = filteredResults.sort((v1: any, v2: any) => {
-          if (v2?.display_name.toLowerCase().indexOf(firstOfRegion) === 0) {
-            return 1
-          } else if (v1?.geojson?.type === 'Polygon' || v1?.geojson?.type === 'MultiPolygon') {
-            return -1
-          }
-          return 0
-        })
-        this.SET_REGION_POLYGON(sortedResults[0])
-        return sortedResults[0]
+          this.SET_REGION_POLYGON(sortedResults[0])
+          return sortedResults[0]
+        } else {
+          console.log('map cannot continue, region not set properly')
+        }
       } catch (e) {
         console.log('map cannot continue')
         console.error(e)
@@ -1029,4 +1035,4 @@ export const useBikeTagStore = defineStore(BikeTagDefaults.store, {
 })
 
 /// TODO: check to see if we can automatically call initBikeTagStore
-export interface BikeTagStore extends ReturnType<typeof useBikeTagStore> {}
+export interface BikeTagStore extends ReturnType<typeof useBikeTagStore> { }

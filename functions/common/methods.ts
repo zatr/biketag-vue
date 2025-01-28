@@ -21,7 +21,7 @@ import {
   isAuthenticationEnabled,
 } from '../../src/common'
 import { BikeTagProfile } from '../../src/common/types'
-import { ErrorMessage, HttpStatusCode } from './constants'
+import { ErrorMessage, HttpStatusCode, JSONModels } from './constants'
 import { BackgroundProcessResults, activeQueue } from './types'
 
 const ajv = new Ajv()
@@ -175,7 +175,7 @@ export const isValidJson = (data, type = 'none') => {
   let schema = {}
 
   switch (type) {
-    case 'profile.patch':
+    case JSONModels.ProfilePatchPlayer:
       schema = {
         type: 'object',
         properties: {
@@ -213,7 +213,7 @@ export const isValidJson = (data, type = 'none') => {
         additionalProperties: false,
       }
       break
-    case 'profile.patch.ambassador':
+    case JSONModels.ProfilePatchAmbassador:
       schema = {
         type: 'object',
         properties: {
@@ -284,7 +284,7 @@ export const isValidJson = (data, type = 'none') => {
         additionalProperties: false,
       }
       break
-    case 'profile.put':
+    case JSONModels.ProfilePut:
       schema = {
         type: 'object',
         properties: {
@@ -489,7 +489,7 @@ export const getPayloadAuthorization = async (event: any): Promise<any> => {
       authProfile = await getAuth0AuthProfile(authorizationString)
       break
     default:
-      authProfile = authorizationString?.length ? 'authorization type not supported' : null
+      authProfile = authorizationString?.length ? ErrorMessage.AuthTypeNotSupported : null
       break
   }
 
@@ -624,11 +624,11 @@ export const sendEmail = async (to: string, subject: string, locals: any, templa
     text = liquid.parseAndRenderSync(textTemplate, locals)
     // }
   } catch (e) {
-    console.error('sendEmail error', { e })
+    console.error(ErrorMessage.sendEmail, { e })
   }
 
   if (!html.length) {
-    console.log('no html was loaded', { templateFilePath, htmlTemplateFilePath })
+    console.log(ErrorMessage.NoHtmlLoaded, { templateFilePath, htmlTemplateFilePath })
     return null
   }
 
@@ -675,7 +675,7 @@ export const sendEmailsToAmbassadors = async (
   sendToAdmin = false,
 ): Promise<{ accepted: any[]; rejected: any[] }> => {
   if (!(process.env.G_EMAIL && process.env.G_PASS))
-    return Promise.resolve({ accepted: [], rejected: ['email is not configured'] })
+    return Promise.resolve({ accepted: [], rejected: [ErrorMessage.EmailNotConfigured] })
 
   let emailSent
   let accepted = []
@@ -792,7 +792,7 @@ export const archiveAndClearQueue = async (
           } else {
             // console.log({ archiveTagResult })
             results.push({
-              message: 'error archiving non-winning found image',
+              message: ErrorMessage.NonWinningTagNotArchived,
               game: gameName,
               tag: nonWinningTag,
             })
@@ -810,7 +810,7 @@ export const archiveAndClearQueue = async (
         } else {
           // console.log({ deleteArchivedTagFromQueueResult })
           results.push({
-            message: 'error deleting non-winning tag from the queue',
+            message: ErrorMessage.NonWinningTagNotDeleted,
             game: gameName,
             tag: nonWinningTag,
           })
@@ -825,7 +825,7 @@ export const archiveAndClearQueue = async (
         results.push({
           message: deletedTagResult.success
             ? 'tag deleted from queue'
-            : 'error deleting tag from the queue',
+            : ErrorMessage.QueuedTagNotDeleted,
           game: gameName,
           tag: queuedTag,
         })
@@ -904,17 +904,18 @@ export const createBikeTagPlayerProfile = async (
 ) => {
   profile = {
     ...profile,
-    name: profile.user_metadata.name ?? profile.name,
+    name: profile?.user_metadata?.name ?? profile.name,
   }
-  if (profile.name?.length) {
+  if (profile?.name?.length) {
     biketag = biketag ?? new BikeTagClient(getBikeTagClientOpts(undefined, true))
     if (game?.length) {
       profile.games = profile.games ?? [game]
     }
     console.log('creating new BikeTag Profile', profile)
+    /// BUG: names with spaces in them can't be created with a matching ID in sanity
     return biketag.updatePlayer(profile, { source: 'sanity' })
   } else {
-    console.error('profile name not set, cannot create profile', profile)
+    console.error(ErrorMessage.ProfileNameNotSet, profile)
   }
   return Promise.resolve({ data: null, success: false })
 }
@@ -930,7 +931,7 @@ export const handleAuth0ProfileRequest = async (req, request, profile): Promise<
     case 'PUT':
       /// CREATE a new BikeTag profile fields (role, name)
       try {
-        const data = JSON.parse(request)
+        const data: any = JSON.parse(request)
         /// If the request is valid for an update
         if (isValidJson(data, 'profile.role')) {
           /// Happy path
@@ -996,7 +997,7 @@ export const handleAuth0ProfileRequest = async (req, request, profile): Promise<
                 new BikeTagClient(biketagAdminOpts),
               )
               if (!updatedPlayerResponse.success) {
-                console.error('Failed to create the player profile', updatedPlayerResponse)
+                console.error(ErrorMessage.PlayerNotCreated, updatedPlayerResponse)
               }
 
               /// CONTINUE to the request for initializing the BikeTag profile
@@ -1028,12 +1029,12 @@ export const handleAuth0ProfileRequest = async (req, request, profile): Promise<
     case 'PATCH':
       /// UPDATE a BikeTag profile
       try {
-        const data = JSON.parse(request)
+        const data: any = JSON.parse(request)
         /// WAIT WHY was this added? this needs to be in the request.
         // delete data.user_metadata?.name
         const profileType = profile.isBikeTagAmbassador
-          ? 'profile.patch.ambassador'
-          : 'profile.patch'
+          ? JSONModels.ProfilePatchAmbassador
+          : JSONModels.ProfilePatchPlayer
         const isValid = isValidJson(data, profileType)
         /// If the request is valid for a patch
         if (isValid) {
@@ -1046,7 +1047,7 @@ export const handleAuth0ProfileRequest = async (req, request, profile): Promise<
           }
         } else {
           /// Invalid data
-          console.log('data is not valid', data, profileType)
+          console.log(ErrorMessage.InvalidRequestData, data, profileType)
           body = ErrorMessage.InvalidRequestData
           statusCode = HttpStatusCode.BadRequest
         }
@@ -1448,7 +1449,7 @@ export const setNewBikeTagPost = async (
       })
     } else {
       results.push({
-        message: 'new BikeTag was not posted',
+        message: ErrorMessage.BikeTagNotPosted,
         error: newBikeTagUpdateResult.error,
         game: game.name,
         tag: newBikeTagPost,
@@ -1467,7 +1468,7 @@ export const setNewBikeTagPost = async (
           'Content-Type': 'application/json',
         },
       }).catch((e) => {
-        console.log('error sending notifications', e.message ?? e)
+        console.log(ErrorMessage.NotificationsNotSent, e.message ?? e)
       })
 
       /************** REMOVE NEWLY POSTED BIKETAG FROM QUEUE *****************/
@@ -1491,7 +1492,7 @@ export const setNewBikeTagPost = async (
       } else {
         // console.log({ deleteQueuedTagResult: deleteWinningTagFromQueueResult })
         results.push({
-          message: 'error deleting winning tag from queue',
+          message: ErrorMessage.WinningTagNotDeleted,
           game: game.name,
           tag: winningBikeTagPost,
         })
@@ -1507,12 +1508,12 @@ export const setNewBikeTagPost = async (
           'Content-Type': 'application/json',
         },
       }).catch((e) => {
-        console.log('error clearing queue', e.message ?? e)
+        console.log(ErrorMessage.QueueNotCleared, e.message ?? e)
       })
     }
   } catch (e) {
     results.push({
-      message: 'error setting new BikeTag Post',
+      message: ErrorMessage.BikeTagNotPosted,
       error: e?.message ?? e,
       game: game.name,
       current: previousBikeTag,
@@ -1565,7 +1566,7 @@ const getAuthManagementToken = async () => {
     //   client_secret: process.env.A_M_CS,
     //   audience: process.env.A_AUDIENCE,
     // })
-    console.log('getAuthManagementToken error', e.message)
+    console.log(ErrorMessage.getAuthManagementToken, e.message)
   }
 }
 
@@ -1591,6 +1592,7 @@ export const constructAmbassadorProfile = (
   profile: any = {},
   defaults: any = {},
 ): BikeTagProfile => {
+  profile = profile ?? {}
   const user_metadata = {
     name: profile?.user_metadata?.name ?? defaults?.user_metadata?.name ?? '',
     passcode: profile?.user_metadata?.passcode ?? defaults?.user_metadata?.passcode ?? '',
@@ -1678,6 +1680,7 @@ export const constructAmbassadorProfile = (
 }
 
 export const constructPlayerProfile = (profile: any = {}, defaults: any = {}): BikeTagProfile => {
+  profile = profile ?? {}
   const user_metadata = {
     name: profile?.user_metadata?.name ?? defaults?.user_metadata?.name ?? '',
     social: {
@@ -1703,7 +1706,7 @@ export const constructPlayerProfile = (profile: any = {}, defaults: any = {}): B
     nonce: profile.nonce ?? defaults.nonce ?? '',
     picture: profile.picture ?? defaults.picture ?? '',
     user_metadata,
-    zipcode: profile.zipcode ?? defaults.zipcode ?? '',
+    zipcode: profile?.zipcode ?? defaults.zipcode ?? '',
   } as BikeTagProfile
 }
 
