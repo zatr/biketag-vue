@@ -1035,4 +1035,4 @@ export const useBikeTagStore = defineStore(BikeTagDefaults.store, {
 })
 
 /// TODO: check to see if we can automatically call initBikeTagStore
-export interface BikeTagStore extends ReturnType<typeof useBikeTagStore> { }
+export interface BikeTagStore extends ReturnType<typeof useBikeTagStore> {}

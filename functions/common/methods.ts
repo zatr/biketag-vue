@@ -1,3 +1,4 @@
+import { AtpAgent } from '@atproto/api'
 import { JwtVerifier, getTokenFromHeader } from '@serverless-jwt/jwt-verifier'
 import Ajv from 'ajv'
 import axios from 'axios'
@@ -1173,6 +1174,63 @@ export const getBikeTagPlayerProfile = async (
   return stringifyResponse ? JSON.stringify(mergedProfile) : mergedProfile
 }
 
+export const sendBikeTagPostNotificationToBlueSky = async (
+  currentTag: Tag,
+  winningTag: Tag,
+  webhook: string,
+  host: string,
+  game: Game,
+) => {
+  const currentNumber = currentTag.tagnumber
+  const winningTagnumber = winningTag.tagnumber
+  const heading = `A new BikeTag has been posted for the [${game.name}](${host}) game!`
+  const title = `BikeTag #${winningTagnumber} by ${winningTag.mysteryPlayer}`
+  const hint = `Hint: ||${winningTag.hint}||`
+  const previousDescription = `[Previous round](${host}/${currentNumber}) found at ${currentTag.foundLocation} by ${currentTag.foundPlayer}`
+  const previousDescriptionSlack = `<${host}/${currentNumber}|Previous round> found at ${currentTag.foundLocation} by ${currentTag.foundPlayer}`
+  const mysteryAltText = `BikeTag #${winningTagnumber} by ${winningTag.mysteryPlayer}`
+  const foundAltText = `BikeTag #${currentNumber} found by ${currentTag.foundPlayer}`
+  const timestamp = getTagDate(currentTag.foundTime).toISOString()
+  const mysteryImageUrl = getImgurImageSized(winningTag.mysteryImageUrl, 'l')
+  const foundImageUrl = getImgurImageSized(currentTag.foundImageUrl, 'l')
+
+  if (process.env.BSKY_USER && process.env.BSKY_PASS) {
+    const bskyUser = process.env.BSKY_USER
+    const bskyPass = process.env.BSKY_USER
+
+    const agent = new AtpAgent({
+      service: process.env.BSKY_SERVER ?? 'https://bsky.social',
+    })
+
+    await agent.login({
+      identifier: bskyUser,
+      password: bskyPass,
+    })
+
+    await agent.post({
+      $type: 'app.bsky.feed.post',
+      text: heading,
+      createdAt: timestamp,
+      embed: {
+        $type: 'app.bsky.embed.external',
+        external: {
+          uri: `${host}/${winningTagnumber}`,
+          title,
+          description: mysteryAltText,
+          thumb: {
+            $type: 'blob',
+            ref: {
+              $link: 'bafkreiash5eihfku2jg4skhyh5kes7j5d5fd6xxloaytdywcvb3r3zrzhu',
+            },
+            mimeType: 'image/png',
+            size: 23527,
+          },
+        },
+      },
+    })
+  }
+}
+
 export const sendBikeTagPostNotificationToWebhook = (
   currentTag: Tag,
   winningTag: Tag,
@@ -1296,6 +1354,21 @@ export const sendNewBikeTagNotifications = async (
         winningTag,
         sendGlobalDiscordNotification,
         'discord',
+        host,
+        game,
+      ),
+    )
+  }
+
+  const sendGlobalBlueSkyNotification = process.env.BSN
+  if (sendGlobalBlueSkyNotification) {
+    // console.log({ sendGlobalBlueSkyNotification })
+    notificationPromises.push(
+      sendBikeTagPostNotificationToWebhook(
+        currentTag,
+        winningTag,
+        sendGlobalBlueSkyNotification,
+        'bluesky',
         host,
         game,
       ),
