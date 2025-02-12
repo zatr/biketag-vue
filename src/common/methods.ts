@@ -94,7 +94,7 @@ export const getBikeTagClientOpts = (win?: Window, withToken = false) => {
     imgur: {
       clientId: process.env.I_CID,
       clientSecret: process.env.I_CSECRET,
-      rapidApiKey: process.env.RA_KEY,
+      rapidApiKey: process.env.RA_FE_KEY,
       refreshToken: withToken ? process.env.I_RTOKEN : undefined,
     },
     sanity: {

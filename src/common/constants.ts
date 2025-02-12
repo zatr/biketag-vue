@@ -57,7 +57,7 @@ export const BikeTagEnv = {
   IA_CSECRET: process.env.IA_CSECRET ?? process.env.IMGUR_ADMIN_CLIENT_SECRET ?? null,
   IA_RTOKEN: process.env.IA_RTOKEN ?? process.env.IMGUR_ADMIN_REFRESH_TOKEN ?? null,
   IA_TOKEN: process.env.IA_TOKEN ?? process.env.IMGUR_ADMIN_ACCESS_TOKEN ?? null,
-  RA_KEY: process.env.RA_KEY ?? process.env.RA_KEY ?? null,
+  RA_FE_KEY: process.env.RA_FE_KEY ?? process.env.RA_FE_KEY ?? null,
   /* Imgur Configuration */
   I_CID: process.env.I_CID ?? process.env.IMGUR_CLIENT_ID ?? null,
   I_CSECRET: process.env.I_CSECRET ?? process.env.IMGUR_CLIENT_SECRET ?? null,
