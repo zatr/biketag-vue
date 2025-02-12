@@ -95,7 +95,7 @@ export const getBikeTagClientOpts = (
       hash: game?.mainhash,
       queuehash: game?.queuehash,
       archivehash: game?.archivehash,
-      rapidApiKey: process.env.RA_KEY,
+      rapidApiKey: process.env.RA_BA_KEY,
     },
     sanity: {
       projectId: process.env.S_PID,
