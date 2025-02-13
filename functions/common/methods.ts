@@ -1202,7 +1202,7 @@ export const sendBikeTagPostNotificationToBlueSky = async (
 
   if (process.env.BSKY_USER && process.env.BSKY_PASS) {
     const bskyUser = process.env.BSKY_USER
-    const bskyPass = process.env.BSKY_USER
+    const bskyPass = process.env.BSKY_PASS
 
     const agent = new AtpAgent({
       service: process.env.BSKY_SERVER ?? 'https://bsky.social',
