@@ -1,11 +1,7 @@
 import { Handler } from '@netlify/functions'
 import BikeTagClient from 'biketag'
 import { Game } from 'biketag/dist/common/schema'
-import {
-  getBikeTagClientOpts,
-  isRequestAllowed,
-  sendNewBikeTagNotifications,
-} from './common'
+import { getBikeTagClientOpts, isRequestAllowed, sendNewBikeTagNotifications } from './common'
 import { HttpStatusCode } from './common/constants'
 import { BackgroundProcessResults } from './common/types'
 
@@ -34,7 +30,7 @@ export const autoNotifyNewBikeTagPosted = async (event): Promise<BackgroundProce
   )
   if (twoMostRecentTags.data?.length !== 2) {
     const errorMessage = 'Could not retrieve two most recent tags.'
-    console.log(errorMessage)
+    console.log(errorMessage, { twoMostRecentTags })
     return {
       results: [errorMessage],
       errors: true,
