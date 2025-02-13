@@ -20,18 +20,17 @@ export enum ErrorMessage {
   ProfileNameNotSet = 'profile name not set, cannot create profile',
   MissingAuthHeader = 'missing authorization header',
   ProfileNotFound = 'no profile found',
-  
+  ImageUploadFailed = 'faile to upload image',
+
   /// Generic Method Errors
   getAuthManagementToken = 'getAuthManagementToken error',
-  sendEmail = 'sendEmail error'
+  sendEmail = 'sendEmail error',
 }
 
 export enum JSONModels {
   ProfilePatchPlayer = 'profile.patch',
   ProfilePatchAmbassador = 'profile.patch.ambassador',
   ProfilePut = 'profile.put',
-
-
 }
 
 export enum InfoMessage {
