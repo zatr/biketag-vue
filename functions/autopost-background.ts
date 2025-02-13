@@ -20,6 +20,7 @@ export const autoPostNewBikeTags = async (): Promise<BackgroundProcessResults> =
   }
 
   // if (!isRequestAllowed()) {}
+  console.log('Running autoPostNewBikeTags')
 
   const adminBiketagOpts = getBikeTagClientOpts(
     { method: 'get' } as unknown as request.Request,
@@ -58,7 +59,10 @@ export const autoPostNewBikeTags = async (): Promise<BackgroundProcessResults> =
         if (!currentBikeTagResponse.success) {
           results = results.concat([
             'queue for game ' + game.name + ' has completed tags in it',
-            'but, for some reason, the current biketag was not returned: ' + currentBikeTagResponse.status + '->' + (currentBikeTagResponse.error ?? currentBikeTagResponse.data),
+            'but, for some reason, the current biketag was not returned: ' +
+              currentBikeTagResponse.status +
+              '->' +
+              (currentBikeTagResponse.error ?? currentBikeTagResponse.data),
             'has imgur rate-limited us? Not using RapidAPI?',
           ])
           errors = true
