@@ -91,9 +91,11 @@ export const getBikeTagClientOpts = (win?: Window, withToken = false) => {
   const domainInfo = getDomainInfo(win)
   return {
     game: domainInfo.subdomain ?? process.env.GAME_NAME,
+    accessToken: process.env.ACCESS_TOKEN,
     imgur: {
       clientId: process.env.I_CID,
       clientSecret: process.env.I_CSECRET,
+      accessToken: process.env.I_TOKEN,
       rapidApiKey: process.env.RA_FE_KEY,
       refreshToken: withToken ? process.env.I_RTOKEN : undefined,
     },
