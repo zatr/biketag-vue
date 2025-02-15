@@ -1215,7 +1215,7 @@ export const sendBikeTagPostNotificationToBlueSky = async (
 
     const uploadedImage = await uploadImageToBlueSkyFromURL(agent, mysteryImageUrl)
 
-    await agent.post({
+    const postCreated = await agent.post({
       $type: 'app.bsky.feed.post',
       text: heading,
       createdAt: timestamp,
@@ -1229,7 +1229,11 @@ export const sendBikeTagPostNotificationToBlueSky = async (
         },
       },
     })
+
+    return `bsky::${postCreated.cid}`
   }
+
+  return `bsky::failed`
 }
 
 export const sendBikeTagPostNotificationToWebhook = (
