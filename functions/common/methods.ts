@@ -1204,11 +1204,15 @@ export const sendBikeTagPostNotificationToBlueSky = async (
   if (process.env.BSKY_USER && process.env.BSKY_PASS) {
     const bskyUser = process.env.BSKY_USER
     const bskyPass = process.env.BSKY_PASS
+    const bskyServer = process.env.BSKY_SERVER ?? 'https://bsky.social'
+
     console.log('sending bluesky on behalf of ' + bskyUser)
 
     const agent = new AtpAgent({
-      service: process.env.BSKY_SERVER ?? 'https://bsky.social',
+      service: bskyServer,
     })
+
+    console.log({ agent, bskyServer })
 
     const loggedIn = await agent.login({
       identifier: bskyUser,
@@ -1262,6 +1266,8 @@ export const sendBikeTagPostNotificationToWebhook = (
   const timestamp = getTagDateISOPlusOffset(currentTag.foundTime, game.region.utc)
   const mysteryImageUrl = getImgurImageSized(winningTag.mysteryImageUrl, 'l')
   const foundImageUrl = getImgurImageSized(currentTag.foundImageUrl, 'l')
+
+  console.log('sending notification webhook timestamp', {timestamp, foundTime: currentTag.foundTime, utc: game.region.utc })
 
   let data = {}
   switch (type) {
