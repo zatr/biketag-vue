@@ -83,7 +83,7 @@
   </div>
 </template>
 
-<script setup name="QueueSubmit">
+<script setup name="QueuePostedShare">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useBikeTagStore } from '@/store/index'
