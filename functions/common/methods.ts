@@ -1201,45 +1201,49 @@ export const sendBikeTagPostNotificationToBlueSky = async (
   const timestamp = getTagDate(currentTag.foundTime).toISOString()
   const mysteryImageUrl = getImgurImageSized(winningTag.mysteryImageUrl, 'l')
 
-  if (process.env.BSKY_USER && process.env.BSKY_PASS) {
-    const bskyUser = process.env.BSKY_USER
-    const bskyPass = process.env.BSKY_PASS
-    const bskyServer = process.env.BSKY_SERVER ?? 'https://bsky.social'
+  try {
+    if (process.env.BSKY_USER && process.env.BSKY_PASS) {
+      const bskyUser = process.env.BSKY_USER
+      const bskyPass = process.env.BSKY_PASS
+      const bskyServer = process.env.BSKY_SERVER ?? 'https://bsky.social'
 
-    console.log('sending bluesky on behalf of ' + bskyUser)
+      console.log('sending bluesky on behalf of ' + bskyUser)
 
-    const agent = new AtpAgent({
-      service: bskyServer,
-    })
+      const agent = new AtpAgent({
+        service: bskyServer,
+      })
 
-    console.log({ agent, bskyServer })
+      console.log({ agent, bskyServer })
 
-    const loggedIn = await agent.login({
-      identifier: bskyUser,
-      password: bskyPass,
-    })
+      const loggedIn = await agent.login({
+        identifier: bskyUser,
+        password: bskyPass,
+      })
 
-    console.log({ loggedIn })
-    const uploadedImage = await uploadImageToBlueSkyFromURL(agent, mysteryImageUrl)
-    console.log({ uploadedImage })
+      console.log({ loggedIn })
+      const uploadedImage = await uploadImageToBlueSkyFromURL(agent, mysteryImageUrl)
+      console.log({ uploadedImage })
 
-    const postCreated = await agent.post({
-      $type: 'app.bsky.feed.post',
-      text: heading,
-      createdAt: timestamp,
-      embed: {
-        $type: 'app.bsky.embed.external',
-        external: {
-          uri: `${host}/${winningTagnumber}`,
-          title,
-          description: mysteryAltText,
-          thumb: uploadedImage,
+      const postCreated = await agent.post({
+        $type: 'app.bsky.feed.post',
+        text: heading,
+        createdAt: timestamp,
+        embed: {
+          $type: 'app.bsky.embed.external',
+          external: {
+            uri: `${host}/${winningTagnumber}`,
+            title,
+            description: mysteryAltText,
+            thumb: uploadedImage,
+          },
         },
-      },
-    })
-    console.log({ postCreated })
+      })
+      console.log({ postCreated })
 
-    return `bsky::${postCreated.cid}`
+      return `bsky::${postCreated.cid}`
+    }
+  } catch(e) {
+    console.log({error: e})
   }
 
   return `bsky::failed`
