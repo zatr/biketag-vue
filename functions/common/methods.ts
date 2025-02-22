@@ -3,7 +3,7 @@ import { JwtVerifier, getTokenFromHeader } from '@serverless-jwt/jwt-verifier'
 import Ajv from 'ajv'
 import axios from 'axios'
 import BikeTagClient from 'biketag'
-import { Ambassador, Game, Player, Tag } from 'biketag/dist/common/schema'
+import { Ambassador, Game, Tag } from 'biketag/dist/common/schema'
 import crypto from 'crypto'
 import CryptoJS from 'crypto-js'
 import { readFileSync } from 'fs'
@@ -19,6 +19,7 @@ import {
   getDomainInfo,
   getImgurImageSized,
   getTagDate,
+  getTagDateISOPlusOffset,
   isAuthenticationEnabled,
 } from '../../src/common'
 import { BikeTagProfile } from '../../src/common/types'
@@ -1203,17 +1204,20 @@ export const sendBikeTagPostNotificationToBlueSky = async (
   if (process.env.BSKY_USER && process.env.BSKY_PASS) {
     const bskyUser = process.env.BSKY_USER
     const bskyPass = process.env.BSKY_PASS
+    console.log('sending bluesky on behalf of ' + bskyUser)
 
     const agent = new AtpAgent({
       service: process.env.BSKY_SERVER ?? 'https://bsky.social',
     })
 
-    await agent.login({
+    const loggedIn = await agent.login({
       identifier: bskyUser,
       password: bskyPass,
     })
 
+    console.log({ loggedIn })
     const uploadedImage = await uploadImageToBlueSkyFromURL(agent, mysteryImageUrl)
+    console.log({ uploadedImage })
 
     const postCreated = await agent.post({
       $type: 'app.bsky.feed.post',
@@ -1229,6 +1233,7 @@ export const sendBikeTagPostNotificationToBlueSky = async (
         },
       },
     })
+    console.log({ postCreated })
 
     return `bsky::${postCreated.cid}`
   }
@@ -1254,7 +1259,7 @@ export const sendBikeTagPostNotificationToWebhook = (
   const previousDescriptionSlack = `<${host}/${currentNumber}|Previous round> found at ${currentTag.foundLocation} by ${currentTag.foundPlayer}`
   const mysteryAltText = `BikeTag #${winningTagnumber} by ${winningTag.mysteryPlayer}`
   const foundAltText = `BikeTag #${currentNumber} found by ${currentTag.foundPlayer}`
-  const timestamp = getTagDate(currentTag.foundTime).toISOString()
+  const timestamp = getTagDateISOPlusOffset(currentTag.foundTime, game.region.utc)
   const mysteryImageUrl = getImgurImageSized(winningTag.mysteryImageUrl, 'l')
   const foundImageUrl = getImgurImageSized(currentTag.foundImageUrl, 'l')
 
