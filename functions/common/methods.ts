@@ -1175,6 +1175,24 @@ export const getBikeTagPlayerProfile = async (
   return stringifyResponse ? JSON.stringify(mergedProfile) : mergedProfile
 }
 
+export const getStartAndEndBytesOfStringWithinString = (outer: string, inner: string) => {
+  const encoder = new TextEncoder();
+  const innerBytes = encoder.encode(inner);
+  
+  const outerUtf16 = [...outer];
+  const innerUtf16 = [...inner];
+  
+  for (let i = 0; i <= outerUtf16.length - innerUtf16.length; i++) {
+      if (outerUtf16.slice(i, i + innerUtf16.length).join('') === inner) {
+          const startByte = encoder.encode(outerUtf16.slice(0, i).join('')).length;
+          const endByte = startByte + innerBytes.length;
+          return [startByte, endByte];
+      }
+  }
+
+  return [];
+}
+
 const uploadImageToBlueSkyFromURL = async (agent: AtpAgent, url: string) => {
   const srcImg = await fetch(url)
   const imgBuffer = await srcImg.arrayBuffer()
@@ -1195,11 +1213,12 @@ export const sendBikeTagPostNotificationToBlueSky = async (
   game: Game,
 ) => {
   const winningTagnumber = winningTag.tagnumber
-  const heading = `A new BikeTag has been posted for the [${game.name}](${host}) game!`
+  const heading = `A new BikeTag has been posted for the ${game.name} game!`
   const title = `BikeTag #${winningTagnumber} by ${winningTag.mysteryPlayer}`
-  const mysteryAltText = `BikeTag #${winningTagnumber} by ${winningTag.mysteryPlayer}`
+  const mysteryAltText = `Hint: ${winningTag.hint}`
   const timestamp = getTagDate(currentTag.foundTime).toISOString()
-  const mysteryImageUrl = getImgurImageSized(winningTag.mysteryImageUrl, 'l')
+  const link = `${host}/${winningTagnumber}`
+  const gameLinkFacet = getStartAndEndBytesOfStringWithinString(heading, game.name)
 
   try {
     if (process.env.BSKY_USER && process.env.BSKY_PASS) {
@@ -1220,30 +1239,38 @@ export const sendBikeTagPostNotificationToBlueSky = async (
         password: bskyPass,
       })
 
-      console.log({ loggedIn })
-      const uploadedImage = await uploadImageToBlueSkyFromURL(agent, mysteryImageUrl)
-      console.log({ uploadedImage })
+      const uploadedImage = await uploadImageToBlueSkyFromURL(agent, winningTag.mysteryImageUrl)
+      // console.log({ uploadedImage })
 
       const postCreated = await agent.post({
         $type: 'app.bsky.feed.post',
         text: heading,
         createdAt: timestamp,
+        facets: gameLinkFacet.length ? [{
+          index: {
+            byteStart: gameLinkFacet[0],
+            byteEnd: gameLinkFacet[1],
+          },
+          features: [{
+            $type: 'app.bsky.richtext.facet#link',
+            uri: link,
+          }]
+        }] : [],
         embed: {
           $type: 'app.bsky.embed.external',
           external: {
-            uri: `${host}/${winningTagnumber}`,
+            uri: host,
             title,
             description: mysteryAltText,
             thumb: uploadedImage,
           },
         },
       })
-      console.log({ postCreated })
 
       return `bsky::${postCreated.cid}`
     }
   } catch(e) {
-    console.log({error: e})
+    console.log({ bskyError: e })
   }
 
   return `bsky::failed`

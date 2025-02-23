@@ -86,7 +86,8 @@ export const getDomainInfo = (req: any): DomainInfo => {
 }
 
 export const getTagDate = (time: number): Date => new Date(time * 1000)
-export const getTagDateISOPlusOffset = (time: number, offset = 'Z'): string => `${new Date(time * 1000).toISOString().slice(0, -1)}${offset}`
+export const getTagDateISOPlusOffset = (time: number, offset = 'Z'): string =>
+  `${new Date(time * 1000).toISOString().slice(0, -1)}${offset}`
 
 export const getBikeTagClientOpts = (win?: Window, withToken = false) => {
   const domainInfo = getDomainInfo(win)
