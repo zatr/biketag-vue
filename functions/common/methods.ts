@@ -1219,6 +1219,7 @@ export const sendBikeTagPostNotificationToBlueSky = async (
   const timestamp = getTagDate(currentTag.foundTime).toISOString()
   const link = `${host}/${winningTagnumber}`
   const gameLinkFacet = getStartAndEndBytesOfStringWithinString(heading, game.name)
+  const imageUrl = getImgurImageSized(winningTag.mysteryImageUrl, 'l')
 
   try {
     if (process.env.BSKY_USER && process.env.BSKY_PASS) {
@@ -1239,7 +1240,7 @@ export const sendBikeTagPostNotificationToBlueSky = async (
         password: bskyPass,
       })
 
-      const uploadedImage = await uploadImageToBlueSkyFromURL(agent, winningTag.mysteryImageUrl)
+      const uploadedImage = await uploadImageToBlueSkyFromURL(agent, imageUrl)
       // console.log({ uploadedImage })
 
       const postCreated = await agent.post({
