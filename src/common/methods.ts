@@ -59,7 +59,7 @@ export const getDomainInfo = (req: any): DomainInfo => {
       ? req.headers.host
       : req?.location?.host?.length
         ? req.location.host
-        : window?.location ? window.location.host : ''
+        : window ? window.location?.host : ''
   )
     .toLowerCase()
     .replace(/www./g, '')
