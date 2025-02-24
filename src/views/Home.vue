@@ -61,21 +61,21 @@
 </template>
 
 <script setup name="HomeView">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 import { useBikeTagStore } from '@/store/index'
+import { computed, onMounted, ref } from 'vue'
 import 'vue-loading-overlay/dist/css/index.css'
+import { useRoute, useRouter } from 'vue-router'
 // import useSWRV from 'swrv'
 
 // components
-import Loading from 'vue-loading-overlay'
 import BikeTag from '@/components/BikeTag.vue'
-import BikeTagHeader from '@/components/BikeTagHeader.vue'
-import BikeTagFooter from '@/components/BikeTagFooter.vue'
 import BikeTagButton from '@/components/BikeTagButton.vue'
+import BikeTagFooter from '@/components/BikeTagFooter.vue'
+import BikeTagHeader from '@/components/BikeTagHeader.vue'
 import BikeTagLabel from '@/components/BikeTagLabel.vue'
 import ExpandableImage from '@/components/ExpandableImage.vue'
 import { useI18n } from 'vue-i18n'
+import Loading from 'vue-loading-overlay'
 
 // data
 const router = useRouter()

@@ -54,12 +54,13 @@ export const getDomainInfo = (req: any): DomainInfo => {
     '0.0.0.0',
     'localhost',
   ]
+  console.log(window.location)
   let host = (
     req?.headers?.host?.length
       ? req.headers.host
       : req?.location?.host?.length
         ? req.location.host
-        : ''
+        : window?.location ? window.location.host : ''
   )
     .toLowerCase()
     .replace(/www./g, '')
