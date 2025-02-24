@@ -1,5 +1,4 @@
 import { Handler } from '@netlify/functions'
-import { getDomainInfo } from '../src/common'
 import {
   acceptCorsHeaders,
   getBikeTagAuth0Profile,

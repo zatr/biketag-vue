@@ -1,14 +1,14 @@
 <template>
   <section
     :id="props.title.toLowerCase().replaceAll(' ', '-')"
-    :class="`biketag-blurb ${props.variant}`"
+    :class="`biketag-blurb ${props.variant} container`"
   >
     <div class="header">
       <h1>{{ props.title }}</h1>
       <h2>{{ props.subtitle }}</h2>
     </div>
     <hr :style="`background-image: url(${styledHr})`" />
-    <div class="container">
+    <div>
       <article class="text-container">
         <slot />
       </article>
@@ -21,8 +21,8 @@
 </template>
 
 <script setup name="BikeTagBlurb">
-import { useRouter } from 'vue-router'
 import StyledHr from '@/assets/images/hr.svg'
+import { useRouter } from 'vue-router'
 
 // componets
 import BikeTagButton from './BikeTagButton.vue'

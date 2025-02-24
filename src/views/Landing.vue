@@ -11,7 +11,7 @@
       variant="left"
     >
       <p>
-        <img src="/images/biketag-example-1.webp" alt="BikeTag Logo" class="mb-3" />
+        <img src="/images/biketag-example-1.webp" alt="BikeTag Post" class="mb-3" />
       </p>
       <p>
         BikeTag is a mystery photo tag game played on bicycles. BikeTag.Org is a place for people to
@@ -142,17 +142,20 @@
 <script setup name="LandingView">
 import BikeTagAmbassadorSvg from '@/assets/images/biketag-ambassador.svg'
 import BikeTagSvg from '@/assets/images/BikeTag.svg'
-import { ref } from 'vue'
+import { getDomainInfo } from '@/common'
+import { onMounted, ref } from 'vue'
 
 // components
 import BikeTagBlurb from '@/components/BikeTagBlurb'
 import BikeTagGames from '@/components/BikeTagGames.vue'
 import BikeTagMap from '@/components/BikeTagMap.vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 // data
 const navList = ref(null)
 const { t } = useI18n()
+const router = useRouter()
 
 // methods
 function toSection(id) {
@@ -165,6 +168,14 @@ function closeMenu() {
     navList.value.classList.remove('show')
   }
 }
+
+onMounted(() => {
+  const domain = getDomainInfo()
+  
+  if (domain.isSubdomain) {
+    router.push({ name: 'Home' })
+  }
+})
 </script>
 
 <style lang="scss">

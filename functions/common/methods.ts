@@ -1386,7 +1386,7 @@ export const sendNewBikeTagNotifications = async (
   })) as Ambassador[]
   const thisGamesAmbassadors = ambassadors.filter((a) => game.ambassadors.indexOf(a.name) !== -1)
   const winningTagnumber = winningTag.tagnumber
-  const host = `https://${game.name}.biketag.org`
+  const host = `https://${game.name.toLowerCase()}.biketag.org`
   const logo = game.logo?.length
     ? game.logo.indexOf('imgur.co') !== -1
       ? game.logo
