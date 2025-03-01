@@ -1,7 +1,7 @@
 import { Handler } from '@netlify/functions'
 import BikeTagClient from 'biketag'
 import { Game } from 'biketag/dist/common/schema'
-import { getBikeTagClientOpts, isRequestAllowed, sendNewBikeTagNotifications } from './common'
+import { getBikeTagClientOpts, getPayloadOpts, isRequestAllowed, sendNewBikeTagNotifications } from './common'
 import { HttpStatusCode } from './common/constants'
 import { BackgroundProcessResults } from './common/types'
 
@@ -13,8 +13,11 @@ export const autoNotifyNewBikeTagPosted = async (event): Promise<BackgroundProce
     }
   }
 
+  const payloadOpts = getPayloadOpts(event, {
+    skipEmails: false,
+    force: false,
+  })
   const errors = false
-  const forceNotify = event.queryStringParameters.force === 'true'
   let results: any = []
   const nonAdminBiketagOpts = getBikeTagClientOpts(event, true)
   const adminBiketagOpts = getBikeTagClientOpts(event, true, true)
@@ -40,7 +43,7 @@ export const autoNotifyNewBikeTagPosted = async (event): Promise<BackgroundProce
   const [winningTag, previousTag] = twoMostRecentTags.data
   const twentyFourHoursAgo = new Date().getTime() - 60 * 60 * 24 * 1000
 
-  if (twentyFourHoursAgo > winningTag.mysteryTime * 1000 && !forceNotify) {
+  if (twentyFourHoursAgo > winningTag.mysteryTime * 1000 && !payloadOpts.force) {
     const errorMessage = 'Most recent tag was created more than 24 hours ago.'
     console.log(errorMessage)
     return {
@@ -56,6 +59,7 @@ export const autoNotifyNewBikeTagPosted = async (event): Promise<BackgroundProce
     previousTag,
     winningTag,
     nonAdminBiketag,
+    payloadOpts.skipEmails,
   ).catch((err) => {
     console.log('error sending notifications', err)
   })

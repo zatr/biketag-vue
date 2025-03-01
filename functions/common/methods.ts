@@ -1233,15 +1233,12 @@ export const sendBikeTagPostNotificationToBlueSky = async (
         service: bskyServer,
       })
 
-      console.log({ agent, bskyServer })
-
       const loggedIn = await agent.login({
         identifier: bskyUser,
         password: bskyPass,
       })
 
       const uploadedImage = await uploadImageToBlueSkyFromURL(agent, imageUrl)
-      // console.log({ uploadedImage })
 
       const postCreated = await agent.post({
         $type: 'app.bsky.feed.post',
@@ -1376,6 +1373,7 @@ export const sendNewBikeTagNotifications = async (
   currentTag: Tag,
   winningTag: Tag,
   adminBiketag?: BikeTagClient,
+  skipEmails = false
 ) => {
   adminBiketag =
     adminBiketag ?? new BikeTagClient(getBikeTagClientOpts(undefined, true, true, game))
@@ -1461,37 +1459,39 @@ export const sendNewBikeTagNotifications = async (
     )
   }
 
-  // console.log('emailing', { thisGamesAmbassadors })
-  notificationPromises.push(
-    sendEmailsToAmbassadors(
-      'biketag-auto-posted',
-      `New BikeTag Round (#${winningTagnumber}) Auto-Posted for [${game.name}]`,
-      thisGamesAmbassadors,
-      (a) => {
-        return {
-          currentBikeTag: currentTag,
-          newBikeTagPost: winningTag,
-          logo,
-          ambassadorsUrl: `${host}/queue?btaId=${a?.id}`,
-          tagAutoApprovedText:
-            'This tag was auto-approved by the AutoPost feature for being the first, completed, BikeTag Post to be submitted. If there is a problem with this tag, please click the button below to address the issue.',
-          newBikeTagRoundTitle: ``,
-          newBikeTagRoundText: `BikeTag Round #${winningTagnumber} was just auto-posted!`,
-          tosText: 'Terms & Conditions',
-          replyToRemoveLink:
-            'reply to this email to request that these emails no longer be sent to you',
-          newBikeTagRoundFooter: 'Thank you for being a BikeTag Ambassador!',
-          btaDashboardButton: 'BikeTag Ambassador dashboard',
-          host,
-          game: game.name,
-          redditLink: `https://reddit.com/r/${game.subreddit?.length ? game.subreddit : 'biketag'}`,
-          twitterLink: `https://twitter.com/${game.twitter?.length ? game.twitter : 'biketag'}`,
-        }
-      },
-    ).then((results) => {
-      return results.accepted.concat(results.rejected)
-    }),
-  )
+  if (!skipEmails) {
+    // console.log('emailing', { thisGamesAmbassadors })
+    notificationPromises.push(
+      sendEmailsToAmbassadors(
+        'biketag-auto-posted',
+        `New BikeTag Round (#${winningTagnumber}) Auto-Posted for [${game.name}]`,
+        thisGamesAmbassadors,
+        (a) => {
+          return {
+            currentBikeTag: currentTag,
+            newBikeTagPost: winningTag,
+            logo,
+            ambassadorsUrl: `${host}/queue?btaId=${a?.id}`,
+            tagAutoApprovedText:
+              'This tag was auto-approved by the AutoPost feature for being the first, completed, BikeTag Post to be submitted. If there is a problem with this tag, please click the button below to address the issue.',
+            newBikeTagRoundTitle: ``,
+            newBikeTagRoundText: `BikeTag Round #${winningTagnumber} was just auto-posted!`,
+            tosText: 'Terms & Conditions',
+            replyToRemoveLink:
+              'reply to this email to request that these emails no longer be sent to you',
+            newBikeTagRoundFooter: 'Thank you for being a BikeTag Ambassador!',
+            btaDashboardButton: 'BikeTag Ambassador dashboard',
+            host,
+            game: game.name,
+            redditLink: `https://reddit.com/r/${game.subreddit?.length ? game.subreddit : 'biketag'}`,
+            twitterLink: `https://twitter.com/${game.twitter?.length ? game.twitter : 'biketag'}`,
+          }
+        },
+      ).then((results) => {
+        return results.accepted.concat(results.rejected)
+      }),
+    )
+  }
 
   return notificationPromises
 }
