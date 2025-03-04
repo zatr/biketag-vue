@@ -73,7 +73,7 @@
       "name_placeholder": "Ingresa su nombre",
       "hint_placeholder": "Ingresa su pista",
       "post_to_reddit": "Reddit",
-      "post_to_twitter": "Twitter",
+      "post_to_bluesky": "Bluesky",
       "queue_found_tag": "Añade tu Imagen Encontrada",
       "submit_new_tag": "Añade tu Imagen Misteriosa",
       "queue_postfix": "",

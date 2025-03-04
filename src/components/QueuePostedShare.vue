@@ -48,7 +48,7 @@
               @click="copyTabContents(postText)"
             />
           </template>
-          <div class="twitter-post">
+          <div class="bluesky-post">
             <Markdown :source="postText" linkify="true" />
           </div>
         </b-tab>
@@ -84,24 +84,24 @@
 </template>
 
 <script setup name="QueuePostedShare">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useBikeTagStore } from '@/store/index'
 import { BikeTagSettingsKeys } from '@/common/types'
+import { useBikeTagStore } from '@/store/index'
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 // components
-import Markdown from 'vue3-markdown-it'
 import BikeTagButton from '@/components/BikeTagButton.vue'
-import { useI18n } from 'vue-i18n'
 import ConfettiExplosion from 'vue-confetti-explosion'
+import { useI18n } from 'vue-i18n'
+import Markdown from 'vue3-markdown-it'
 
 // data
 const emit = defineEmits(['submit'])
 const postToReddit = ref(false)
-const postToTwitter = ref(false)
+const postToBluesky = ref(false)
 const postToInstagram = ref(false)
 const showReddit = ref(false)
-const showTwitter = ref(false)
+const showBluesky = ref(false)
 const showInstagram = ref(false)
 const submitTag = ref(null)
 const store = useBikeTagStore()
@@ -172,7 +172,7 @@ function goViewRound() {
 // mounted
 onMounted(() => {
   // postToReddit.value = showReddit.value = supportsReddit.value
-  // postToTwitter.value = showTwitter.value = supportsTwitter.value
+  // postToBluesky.value = showBluesky.value = supportsBluesky.value
   // postToInstagram.value = showInstagram.value = supportsInstagram.value
   showConfetti.value = true
 
@@ -219,7 +219,7 @@ onMounted(() => {
     margin-bottom: 1em;
   }
 
-  .twitter-post {
+  .bluesky-post {
     background-color: black;
     padding: 1em;
     text-align: left;

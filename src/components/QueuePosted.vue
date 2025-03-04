@@ -15,7 +15,7 @@ const store = useBikeTagStore()
 const router = useRouter()
 const { t } = useI18n()
 const postToReddit = ref(false)
-const postToTwitter = ref(false)
+const postToBluesky = ref(false)
 const postToInstagram = ref(false)
 
 // computed
@@ -34,13 +34,13 @@ async function submitTag(defaultShareSettings) {
   const submittedTag = getPlayerTag.value
   defaultShareSettings = defaultShareSettings ?? {
     postToReddit,
-    postToTwitter,
+    postToBluesky,
     postToInstagram,
   }
 
   submittedTag.discussionUrl = '☯'
   submittedTag.mentionUrl = JSON.stringify({
-    postToTwitter: defaultShareSettings.postToTwitter.value,
+    postToBluesky: defaultShareSettings.postToBluesky.value,
   })
   submittedTag.shareUrl = JSON.stringify({
     postToInstagram: defaultShareSettings.postToInstagram.value,
@@ -65,7 +65,7 @@ onMounted(() => {
     /// TODO: check game settings for queue and remove this hardcoded hack
     const defaultShareSettings = {
       postToReddit: postToReddit.value,
-      postToTwitter: postToTwitter.value,
+      postToBluesky: postToBluesky.value,
       postToInstagram: postToInstagram.value,
     }
     debug('autosubmitting tag with default share settings', defaultShareSettings)
@@ -102,13 +102,13 @@ onMounted(() => {
           @click="showReddit = !showReddit"
         />
       </fieldset>
-      <fieldset v-if="supportsTwitter">
-        <label for="postToTwitter">{{ $t('pages.round.post_to_twitter') }}</label>
+      <fieldset v-if="supportsBluesky">
+        <label for="postToBluesky">{{ $t('pages.round.post_to_bluesky') }}</label>
         <input
-          v-model="postToTwitter"
-          name="postToTwitter"
+          v-model="postToBluesky"
+          name="postToBluesky"
           type="checkbox"
-          @click="showTwitter = !showTwitter"
+          @click="showBluesky = !showBluesky"
         />
       </fieldset>
       <fieldset v-if="supportsInstagram">

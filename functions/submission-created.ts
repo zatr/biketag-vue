@@ -147,8 +147,8 @@ export const handler = async (event) => {
                   redditLink: `https://reddit.com/r/${
                     game.subreddit?.length ? game.subreddit : 'biketag'
                   }`,
-                  twitterLink: `https://twitter.com/${
-                    game.twitter?.length ? game.twitter : 'biketag'
+                  bskyLink: `https://bsky.app/profile/${
+                    game.bsky?.length ? game.bsky : 'biketag.bsky.social'
                   }`,
                   // instagramLink: `https://www.reddit.com/r/${game. ?? 'biketag'}`,
                   expiryHash: getEncodedExpiry({
@@ -216,8 +216,8 @@ export const handler = async (event) => {
           //           redditLink: `https://reddit.com/r/${
           //             game.subreddit?.length ? game.subreddit : 'biketag'
           //           }`,
-          //           twitterLink: `https://twitter.com/${
-          //             game.twitter?.length ? game.twitter : 'biketag'
+          //           bskyLink: `https://bsky.app/profile/${
+          //             game.bsky?.length ? game.bsky : 'biketag.bsky.social'
           //           }`,
           //           // instagramLink: `https://www.reddit.com/r/${game. ?? 'biketag'}`,
           //         }

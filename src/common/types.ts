@@ -22,7 +22,7 @@ export interface ProfileMeta {
   social: {
     reddit: string
     instagram: string
-    twitter: string
+    bluesky: string
     imgur: string
     discord: string
   }
@@ -107,7 +107,7 @@ export enum BikeTagSettingsKeys {
   AutoPost = 'queue::autoPost',
   Jingle = 'easter::jingle',
   SupportsReddit = 'social::reddit',
-  SupportsTwitter = 'social::twitter',
+  SupportsBluesky = 'social::bluesky',
   SupportsInstagram = 'social::instagram',
 }
 

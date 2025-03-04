@@ -199,7 +199,7 @@ export const isValidJson = (data, type = 'none') => {
                 properties: {
                   reddit: { type: 'string' },
                   instagram: { type: 'string' },
-                  twitter: { type: 'string' },
+                  bsky: { type: 'string' },
                   imgur: { type: 'string' },
                   discord: { type: 'string' },
                 },
@@ -237,7 +237,7 @@ export const isValidJson = (data, type = 'none') => {
                 properties: {
                   reddit: { type: 'string' },
                   instagram: { type: 'string' },
-                  twitter: { type: 'string' },
+                  bluesky: { type: 'string' },
                   imgur: { type: 'string' },
                   discord: { type: 'string' },
                 },
@@ -1484,7 +1484,7 @@ export const sendNewBikeTagNotifications = async (
             host,
             game: game.name,
             redditLink: `https://reddit.com/r/${game.subreddit?.length ? game.subreddit : 'biketag'}`,
-            twitterLink: `https://twitter.com/${game.twitter?.length ? game.twitter : 'biketag'}`,
+            bskyLink: `https://bsky.app/profile/${game.bluesky?.length ? game.bluesky : 'biketag.bsky.social'}`,
           }
         },
       ).then((results) => {
@@ -1717,8 +1717,8 @@ export const constructAmbassadorProfile = (
         profile?.user_metadata?.social?.instagram ??
         defaults?.user_metadata?.social?.instagram ??
         '',
-      twitter:
-        profile?.user_metadata?.social?.twitter ?? defaults?.user_metadata?.social?.twitter ?? '',
+      bluesky:
+        profile?.user_metadata?.social?.bluesky ?? defaults?.user_metadata?.social?.bluesky ?? '',
       imgur: profile?.user_metadata?.social?.imgur ?? defaults?.user_metadata?.social?.imgur ?? '',
       discord:
         profile?.user_metadata?.social?.discord ?? defaults?.user_metadata?.social?.discord ?? '',
@@ -1800,7 +1800,7 @@ export const constructPlayerProfile = (profile: any = {}, defaults: any = {}): B
     social: {
       reddit: profile?.user_metadata?.reddit ?? defaults?.user_metadata?.reddit ?? '',
       instagram: profile?.user_metadata?.instagram ?? defaults?.user_metadata?.instagram ?? '',
-      twitter: profile?.user_metadata?.twitter ?? defaults?.user_metadata?.twitter ?? '',
+      bluesky: profile?.user_metadata?.bluesky ?? defaults?.user_metadata?.bluesky ?? '',
       imgur: profile?.user_metadata?.imgur ?? defaults?.user_metadata?.imgur ?? '',
       discord: profile?.user_metadata?.discord ?? defaults?.user_metadata?.discord ?? '',
     },
