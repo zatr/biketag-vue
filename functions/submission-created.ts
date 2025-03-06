@@ -147,7 +147,7 @@ export const handler = async (event) => {
                   redditLink: `https://reddit.com/r/${
                     game.subreddit?.length ? game.subreddit : 'biketag'
                   }`,
-                  bskyLink: `https://bsky.app/profile/${
+                  blueskyLink: `https://bsky.app/profile/${
                     game.bsky?.length ? game.bsky : 'biketag.bsky.social'
                   }`,
                   // instagramLink: `https://www.reddit.com/r/${game. ?? 'biketag'}`,
@@ -216,7 +216,7 @@ export const handler = async (event) => {
           //           redditLink: `https://reddit.com/r/${
           //             game.subreddit?.length ? game.subreddit : 'biketag'
           //           }`,
-          //           bskyLink: `https://bsky.app/profile/${
+          //           blueskyLink: `https://bsky.app/profile/${
           //             game.bsky?.length ? game.bsky : 'biketag.bsky.social'
           //           }`,
           //           // instagramLink: `https://www.reddit.com/r/${game. ?? 'biketag'}`,

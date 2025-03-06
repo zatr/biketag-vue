@@ -199,7 +199,7 @@ export const isValidJson = (data, type = 'none') => {
                 properties: {
                   reddit: { type: 'string' },
                   instagram: { type: 'string' },
-                  bsky: { type: 'string' },
+                  bluesky: { type: 'string' },
                   imgur: { type: 'string' },
                   discord: { type: 'string' },
                 },
@@ -1176,21 +1176,21 @@ export const getBikeTagPlayerProfile = async (
 }
 
 export const getStartAndEndBytesOfStringWithinString = (outer: string, inner: string) => {
-  const encoder = new TextEncoder();
-  const innerBytes = encoder.encode(inner);
-  
-  const outerUtf16 = [...outer];
-  const innerUtf16 = [...inner];
-  
+  const encoder = new TextEncoder()
+  const innerBytes = encoder.encode(inner)
+
+  const outerUtf16 = [...outer]
+  const innerUtf16 = [...inner]
+
   for (let i = 0; i <= outerUtf16.length - innerUtf16.length; i++) {
-      if (outerUtf16.slice(i, i + innerUtf16.length).join('') === inner) {
-          const startByte = encoder.encode(outerUtf16.slice(0, i).join('')).length;
-          const endByte = startByte + innerBytes.length;
-          return [startByte, endByte];
-      }
+    if (outerUtf16.slice(i, i + innerUtf16.length).join('') === inner) {
+      const startByte = encoder.encode(outerUtf16.slice(0, i).join('')).length
+      const endByte = startByte + innerBytes.length
+      return [startByte, endByte]
+    }
   }
 
-  return [];
+  return []
 }
 
 const uploadImageToBlueSkyFromURL = async (agent: AtpAgent, url: string) => {
@@ -1244,16 +1244,22 @@ export const sendBikeTagPostNotificationToBlueSky = async (
         $type: 'app.bsky.feed.post',
         text: heading,
         createdAt: timestamp,
-        facets: gameLinkFacet.length ? [{
-          index: {
-            byteStart: gameLinkFacet[0],
-            byteEnd: gameLinkFacet[1],
-          },
-          features: [{
-            $type: 'app.bsky.richtext.facet#link',
-            uri: link,
-          }]
-        }] : [],
+        facets: gameLinkFacet.length
+          ? [
+              {
+                index: {
+                  byteStart: gameLinkFacet[0],
+                  byteEnd: gameLinkFacet[1],
+                },
+                features: [
+                  {
+                    $type: 'app.bsky.richtext.facet#link',
+                    uri: link,
+                  },
+                ],
+              },
+            ]
+          : [],
         embed: {
           $type: 'app.bsky.embed.external',
           external: {
@@ -1265,13 +1271,13 @@ export const sendBikeTagPostNotificationToBlueSky = async (
         },
       })
 
-      return `bsky::${postCreated.cid}`
+      return `bluesky::${postCreated.cid}`
     }
-  } catch(e) {
-    console.log({ bskyError: e })
+  } catch (e) {
+    console.log({ blueskyError: e })
   }
 
-  return `bsky::failed`
+  return `bluesky::failed`
 }
 
 export const sendBikeTagPostNotificationToWebhook = (
@@ -1296,7 +1302,11 @@ export const sendBikeTagPostNotificationToWebhook = (
   const mysteryImageUrl = getImgurImageSized(winningTag.mysteryImageUrl, 'l')
   const foundImageUrl = getImgurImageSized(currentTag.foundImageUrl, 'l')
 
-  console.log('sending notification webhook timestamp', {timestamp, foundTime: currentTag.foundTime, utc: game.region.utc })
+  console.log('sending notification webhook timestamp', {
+    timestamp,
+    foundTime: currentTag.foundTime,
+    utc: game.region.utc,
+  })
 
   let data = {}
   switch (type) {
@@ -1373,7 +1383,7 @@ export const sendNewBikeTagNotifications = async (
   currentTag: Tag,
   winningTag: Tag,
   adminBiketag?: BikeTagClient,
-  skipEmails = false
+  skipEmails = false,
 ) => {
   adminBiketag =
     adminBiketag ?? new BikeTagClient(getBikeTagClientOpts(undefined, true, true, game))
@@ -1484,7 +1494,7 @@ export const sendNewBikeTagNotifications = async (
             host,
             game: game.name,
             redditLink: `https://reddit.com/r/${game.subreddit?.length ? game.subreddit : 'biketag'}`,
-            bskyLink: `https://bsky.app/profile/${game.bluesky?.length ? game.bluesky : 'biketag.bsky.social'}`,
+            blueskyLink: `https://bsky.app/profile/${game.bluesky?.length ? game.bluesky : 'biketag.bsky.social'}`,
           }
         },
       ).then((results) => {

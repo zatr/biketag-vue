@@ -81,7 +81,7 @@
           />
         </fieldset>
         <fieldset v-if="supportsBluesky">
-          <label for="postToBluesky">{{ $t('pages.round.post_to_Bluesky') }}</label>
+          <label for="postToBluesky">{{ $t('pages.round.post_to_bluesky') }}</label>
           <input
             v-model="postToBluesky"
             name="postToBluesky"
