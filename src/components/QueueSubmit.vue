@@ -23,14 +23,14 @@
           <template #title>
             <img
               v-b-popover.click.blur.top="'Copied!'"
-              src="@/assets/images/Twitter.svg"
+              src="@/assets/images/Bluesky.svg"
               class="tab-logo img-fluid"
-              @click="copyTabContents(twitterPostText)"
+              @click="copyTabContents(BlueskyPostText)"
             />
           </template>
-          <div v-if="supportsTwitter && showTwitter" class="twitter-post">
-            <Markdown :source="twitterPostText" linkify="true" />
-            <pre v-if="!showTwitter">{{ twitterPostText }}</pre>
+          <div v-if="supportsBluesky && showBluesky" class="bluesky-post">
+            <Markdown :source="BlueskyPostText" linkify="true" />
+            <pre v-if="!showBluesky">{{ BlueskyPostText }}</pre>
           </div>
         </b-tab>
         <b-tab v-if="!!getGame?.page?.length">
@@ -52,7 +52,7 @@
           </div>
         </b-tab>
       </b-tabs>
-      <p v-if="supportsReddit || supportsTwitter || supportsInstagram" class="queue-text">
+      <p v-if="supportsReddit || supportsBluesky || supportsInstagram" class="queue-text">
         {{ $t('pages.round.submit_text') }}
       </p>
       <p v-else class="queue-text">
@@ -80,13 +80,13 @@
             @click="showReddit = !showReddit"
           />
         </fieldset>
-        <fieldset v-if="supportsTwitter">
-          <label for="postToTwitter">{{ $t('pages.round.post_to_twitter') }}</label>
+        <fieldset v-if="supportsBluesky">
+          <label for="postToBluesky">{{ $t('pages.round.post_to_bluesky') }}</label>
           <input
-            v-model="postToTwitter"
-            name="postToTwitter"
+            v-model="postToBluesky"
+            name="postToBluesky"
             type="checkbox"
-            @click="showTwitter = !showTwitter"
+            @click="showBluesky = !showBluesky"
           />
         </fieldset>
         <fieldset v-if="supportsInstagram">
@@ -109,22 +109,22 @@
 </template>
 
 <script setup name="QueueSubmit">
-import { ref, computed, onMounted } from 'vue'
-import { useBikeTagStore } from '@/store/index'
 import { BikeTagSettingsKeys } from '@/common/types'
+import { useBikeTagStore } from '@/store/index'
+import { computed, onMounted, ref } from 'vue'
 
 // components
-import Markdown from 'vue3-markdown-it'
 import BikeTagButton from '@/components/BikeTagButton.vue'
 import { useI18n } from 'vue-i18n'
+import Markdown from 'vue3-markdown-it'
 
 // data
 const emit = defineEmits(['submit'])
 const postToReddit = ref(false)
-const postToTwitter = ref(false)
+const postToBluesky = ref(false)
 const postToInstagram = ref(false)
 const showReddit = ref(false)
-const showTwitter = ref(false)
+const showBluesky = ref(false)
 const showInstagram = ref(false)
 const submitTag = ref(null)
 const store = useBikeTagStore()
@@ -137,8 +137,8 @@ const getPlayerId = computed(() => store.getPlayerId)
 const getGameNameProper = computed(() => store.getGameNameProper)
 const getGame = computed(() => store.getGame)
 const supportsReddit = computed(() => !!getGame.value?.settings[BikeTagSettingsKeys.SupportsReddit])
-const supportsTwitter = computed(
-  () => !!getGame.value?.settings[BikeTagSettingsKeys.SupportsTwitter],
+const supportsBluesky = computed(
+  () => !!getGame.value?.settings[BikeTagSettingsKeys.SupportsBluesky],
 )
 const supportsInstagram = computed(
   () => !!getGame.value?.settings[BikeTagSettingsKeys.SupportsInstagram],
@@ -156,7 +156,7 @@ See all BikeTags and more, for ${getGameNameProper.value}:
 [biketag.org](https://https://biketag.org) | [Leaderboard](https://https://biketag.org/leaderboard) | [Rules](https://https://biketag.org/howto)
     `,
 )
-const twitterPostText = computed(
+const BlueskyPostText = computed(
   () => `
 Seattle BikeTag!
 
@@ -179,7 +179,7 @@ function onSubmit() {
     postToReddit: postToReddit.value,
   })
   submittedTag.mentionUrl = JSON.stringify({
-    postToTwitter: postToTwitter.value,
+    postToBluesky: postToBluesky.value,
   })
   submittedTag.shareUrl = JSON.stringify({
     postToInstagram: postToInstagram.value,
@@ -200,7 +200,7 @@ function onSubmit() {
 // mounted
 onMounted(() => {
   postToReddit.value = showReddit.value = supportsReddit.value
-  postToTwitter.value = showTwitter.value = supportsTwitter.value
+  postToBluesky.value = showBluesky.value = supportsBluesky.value
   postToInstagram.value = showInstagram.value = supportsInstagram.value
 })
 </script>
@@ -230,7 +230,7 @@ onMounted(() => {
     margin-bottom: 1em;
   }
 
-  .twitter-post {
+  .Bluesky-post {
     background-color: black;
     padding: 1em;
     text-align: left;

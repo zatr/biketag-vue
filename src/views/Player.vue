@@ -72,7 +72,7 @@ import Discord from '@/assets/images/Discord.svg'
 import Imgur from '@/assets/images/Imgur.svg'
 import Instagram from '@/assets/images/Instagram.svg'
 import Reddit from '@/assets/images/Reddit.svg'
-import Twitter from '@/assets/images/Twitter.svg'
+import Bluesky from '@/assets/images/Twitter.svg'
 import { useBikeTagStore } from '@/store'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -90,14 +90,14 @@ const playerSocial = ref(null)
 const socialNetworkIcons = {
   reddit: Reddit,
   instagram: Instagram,
-  twitter: Twitter,
+  bluesky: Bluesky,
   imgur: Imgur,
   discord: Discord,
 }
 const socialLinks = {
   imgur: 'https://imgur.com/user/',
   instagram: 'https://instagram.com/',
-  twitter: 'https://twitter.com/',
+  bluesky: 'https://bsky.app/',
   reddit: 'https://reddit.com/u/',
   discord: '',
 }

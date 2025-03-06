@@ -52,6 +52,21 @@
           >
             {{ $t('menu.queue') }}
           </li>
+          <template v-if="isAuthenticated">
+            <li class="nav-item" @click="logoutClick">
+              {{ $t('menu.logout') }}
+            </li>
+          </template>
+          <template v-else>
+            <li
+              v-if="showLogin"
+              class="nav-item"
+              :class="{ 'active-nav': currentRoute === 'Login' }"
+              @click="login"
+            >
+              {{ $t('menu.login') }}
+            </li>
+          </template>
           <li
             class="nav-item"
             :class="{ 'active-nav': currentRoute === 'Home' }"
@@ -87,9 +102,10 @@
           >
             {{ $t('menu.top10') }}
           </li>
-          <li class="nav-item" :class="{ 'active-nav': currentRoute === 'How' }" @click="goHowPage">
+          <!-- Hiding the how-to page link to save space in the menu -->
+          <!-- <li class="nav-item" :class="{ 'active-nav': currentRoute === 'How' }" @click="goHowPage">
             {{ $t('menu.howto') }}
-          </li>
+          </li> -->
           <li
             class="nav-item"
             :class="{ 'active-nav': currentRoute === 'About' }"
@@ -97,21 +113,6 @@
           >
             {{ $t('menu.about') }}
           </li>
-          <template v-if="isAuthenticated">
-            <li class="nav-item" @click="logoutClick">
-              {{ $t('menu.logout') }}
-            </li>
-          </template>
-          <template v-else>
-            <li
-              v-if="showLogin"
-              class="nav-item"
-              :class="{ 'active-nav': currentRoute === 'Login' }"
-              @click="login"
-            >
-              {{ $t('menu.login') }}
-            </li>
-          </template>
         </ul>
       </b-collapse>
     </nav>
