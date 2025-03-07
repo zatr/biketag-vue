@@ -37,6 +37,42 @@ export enum InfoMessage {
   ProfileInit = 'intializing profile fields (name, role)',
 }
 
+export const timeZoneMap = {
+  'Africa/Cairo': 'EET',
+  'Africa/Johannesburg': 'SAST',
+  'Africa/Lagos': 'WAT',
+  'Africa/Nairobi': 'EAT',
+  'America/Anchorage': 'AKST',
+  'America/Argentina/Buenos_Aires': 'ART',
+  'America/Chicago': 'CST',
+  'America/Denver': 'MST',
+  'America/Los_Angeles': 'PST',
+  'America/New_York': 'EST',
+  'America/Phoenix': 'MST', // No DST
+  'America/Sao_Paulo': 'BRT',
+  'America/Toronto': 'EST',
+  'Asia/Bangkok': 'ICT',
+  'Asia/Dubai': 'GST',
+  'Asia/Hong_Kong': 'HKT',
+  'Asia/Jakarta': 'WIB',
+  'Asia/Kolkata': 'IST',
+  'Asia/Seoul': 'KST',
+  'Asia/Shanghai': 'CST',
+  'Asia/Tokyo': 'JST',
+  'Australia/Adelaide': 'ACST',
+  'Australia/Brisbane': 'AEST',
+  'Australia/Perth': 'AWST',
+  'Australia/Sydney': 'AEDT',
+  'Europe/Berlin': 'CET',
+  'Europe/London': 'GMT',
+  'Europe/Madrid': 'CET',
+  'Europe/Moscow': 'MSK',
+  'Europe/Paris': 'CET',
+  'Europe/Rome': 'CET',
+  'Pacific/Auckland': 'NZDT',
+  'Pacific/Honolulu': 'HST',
+}
+
 /// ****************************  Response Enums   ************************************** ///
 /**
  * Hypertext Transfer Protocol (HTTP) response status codes.

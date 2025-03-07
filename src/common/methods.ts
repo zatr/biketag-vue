@@ -5,6 +5,7 @@ import CryptoJS from 'crypto-js'
 import domtoimage from 'dom-to-image'
 import log from 'loglevel'
 import md5 from 'md5'
+import spacetime from 'spacetime'
 import { useCookies } from 'vue3-cookies'
 import {
   BikeTagDefaults,
@@ -58,7 +59,8 @@ export const getDomainInfo = (req: any): DomainInfo => {
     req?.headers?.host?.length
       ? req.headers.host
       : req?.location?.host?.length
-        ? req.location.host : ''
+        ? req.location.host
+        : ''
   )
     .toLowerCase()
     .replace(/www./g, '')
@@ -87,6 +89,10 @@ export const getDomainInfo = (req: any): DomainInfo => {
 export const getTagDate = (time: number): Date => new Date(time * 1000)
 export const getTagDateISOPlusOffset = (time: number, offset = 'Z'): string =>
   `${new Date(time * 1000).toISOString().slice(0, -1)}${offset?.length ? offset : 'Z'}`
+export const getTagDateISOFromTimezone = (time: number, tz?: string) =>
+  spacetime(time, tz).format(
+    '{year}-{date-pad}-{month-pad} {hour-24-pad}:{minute-pad}:{second-pad}',
+  )
 
 export const getBikeTagClientOpts = (win?: Window, withToken = false) => {
   const domainInfo = getDomainInfo(win)
