@@ -19,7 +19,7 @@ import {
   getDomainInfo,
   getImgurImageSized,
   getTagDate,
-  getTagDateISOPlusOffset,
+  getTagDateISOFromTimezone,
   isAuthenticationEnabled,
 } from '../../src/common'
 import { BikeTagProfile } from '../../src/common/types'
@@ -1216,7 +1216,7 @@ export const sendBikeTagPostNotificationToBlueSky = async (
   const heading = `A new BikeTag has been posted for the ${game.name} game!`
   const title = `BikeTag #${winningTagnumber} by ${winningTag.mysteryPlayer}`
   const mysteryAltText = `Hint: ${winningTag.hint}`
-  const timestamp = getTagDate(currentTag.foundTime).toISOString()
+  const timestamp = getTagDateISOFromTimezone(currentTag.foundTime, game.region.tz)
   const link = `${host}/${winningTagnumber}`
   const gameLinkFacet = getStartAndEndBytesOfStringWithinString(heading, game.name)
   const imageUrl = getImgurImageSized(winningTag.mysteryImageUrl, 'l')
@@ -1298,14 +1298,14 @@ export const sendBikeTagPostNotificationToWebhook = (
   const previousDescriptionSlack = `<${host}/${currentNumber}|Previous round> found at ${currentTag.foundLocation} by ${currentTag.foundPlayer}`
   const mysteryAltText = `BikeTag #${winningTagnumber} by ${winningTag.mysteryPlayer}`
   const foundAltText = `BikeTag #${currentNumber} found by ${currentTag.foundPlayer}`
-  const timestamp = getTagDateISOPlusOffset(currentTag.foundTime, game.region.utc)
+  const timestamp = getTagDateISOFromTimezone(currentTag.foundTime, game.region.tz)
   const mysteryImageUrl = getImgurImageSized(winningTag.mysteryImageUrl, 'l')
   const foundImageUrl = getImgurImageSized(currentTag.foundImageUrl, 'l')
 
   console.log('sending notification webhook timestamp', {
     timestamp,
     foundTime: currentTag.foundTime,
-    utc: game.region.utc,
+    tz: game.region.tz,
   })
 
   let data = {}
