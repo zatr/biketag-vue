@@ -145,12 +145,12 @@
 </template>
 
 <script setup name="ProfileView">
+import Bluesky from '@/assets/images/Bluesky.svg'
 import Discord from '@/assets/images/Discord.svg'
 import StyledHr from '@/assets/images/hr.svg'
 import Imgur from '@/assets/images/Imgur.svg'
 import Instagram from '@/assets/images/Instagram.svg'
 import Reddit from '@/assets/images/Reddit.svg'
-import Bluesky from '@/assets/images/Twitter.svg'
 import { useBikeTagStore } from '@/store/index'
 import { useAuth0 } from '@auth0/auth0-vue'
 import { computed, inject, nextTick, onMounted, ref } from 'vue'
