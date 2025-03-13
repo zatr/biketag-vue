@@ -68,11 +68,11 @@
 </template>
 
 <script setup name="PlayerView">
+import Bluesky from '@/assets/images/Bluesky.svg'
 import Discord from '@/assets/images/Discord.svg'
 import Imgur from '@/assets/images/Imgur.svg'
 import Instagram from '@/assets/images/Instagram.svg'
 import Reddit from '@/assets/images/Reddit.svg'
-import Bluesky from '@/assets/images/Twitter.svg'
 import { useBikeTagStore } from '@/store'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
