@@ -1,5 +1,5 @@
 import { DeviceUUID } from '@/common/uuid'
-import { sanityClient } from '@sanity/client'
+import sanityClient from '@sanity/client'
 import { booleanPointInPolygon, buffer, multiPolygon, point, polygon } from '@turf/turf'
 import { Game, Tag } from 'biketag/dist/common/schema'
 import CryptoJS from 'crypto-js'
@@ -445,10 +445,10 @@ export const dequeueErrorNotify = (toast: any) => (error: string) => {
 }
 
 export const getBannedIPs = () => {
-  const client = sanityClient({
+  const sanityInstance = sanityClient({
     projectId: process.env.S_PID,
     dataset: process.env.S_DSET,
   })
 
-  return client.fetch(`*[_type == "setting" && key == "banned:ip"].value`, {})
+  return sanityInstance.fetch(`*[_type == "setting" && key == "banned:ip"].value`, {})
 }

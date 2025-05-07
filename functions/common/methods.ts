@@ -1,5 +1,4 @@
 import { AtpAgent } from '@atproto/api'
-import { sanityClient } from '@sanity/client'
 import { JwtVerifier, getTokenFromHeader } from '@serverless-jwt/jwt-verifier'
 import Ajv from 'ajv'
 import axios from 'axios'
