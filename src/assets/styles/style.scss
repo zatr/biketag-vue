@@ -369,6 +369,11 @@ body {
           @media (min-width: $breakpoint-desktop) {
             margin: 0 2rem;
           }
+    
+          .logo {
+            max-width: 10rem;
+            height: 3.5rem;
+          }
         }
     
         .navbar-collapse {
@@ -388,11 +393,6 @@ body {
         .navbar-toggler {
           //   margin-right: 1rem;
           margin: 0.5rem 1rem;
-        }
-    
-        .logo {
-          max-width: 10rem;
-          height: 3.5rem;
         }
     
         .hamburger-image {
