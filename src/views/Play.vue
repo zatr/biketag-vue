@@ -110,7 +110,7 @@
 <script setup name="QueueBikeTagView">
 import ArrowSvg from '@/assets/images/arrow.svg'
 import LineSvg from '@/assets/images/line.svg'
-import { dequeueErrorNotify, sendNetlifyError, sendNetlifyForm } from '@/common'
+import { dequeueErrorNotify, getBannedIPs, sendNetlifyError, sendNetlifyForm } from '@/common'
 import { BiketagQueueFormSteps } from '@/common/types'
 import { useBikeTagStore } from '@/store/index'
 import ipify from 'ipify'
@@ -167,10 +167,11 @@ const isSubmittingData = () =>
   )
 async function onQueueSubmit(newTagSubmission) {
   const { tag, formAction, formData, storeAction } = newTagSubmission
-  const ipAddress = await ipify({useIPv6: false})
+  const ipAddress = await ipify()
+  const bannedIPs = getBannedIPs()
 
-  // Check to see if IP address is malicious
-  if (false) {
+  // Check to see if IP address is banned
+  if (bannedIPs.indexOf(ipAddress) !== -1) {
     return
   }
 

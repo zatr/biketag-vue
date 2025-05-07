@@ -1,7 +1,7 @@
 import { BikeTagClient } from 'biketag'
 import { Ambassador, Game, Tag } from 'biketag/dist/common/schema'
 import request from 'request'
-import { stringifyNumber } from '../src/common'
+import { getBannedIPs, stringifyNumber } from '../src/common'
 import {
   defaultLogo,
   getBikeTagClientOpts,
@@ -17,6 +17,15 @@ export const handler = async (event) => {
   let success = false
 
   console.log('submission-created', { payload })
+  const bannedIPs = getBannedIPs()
+
+  if (bannedIPs.indexOf(payload.ip) !== -1) {
+    console.error('ip address is banned', payload.ip)
+    return {
+      data: false,
+      statusCode: HttpStatusCode.BadRequest,
+    }
+  }
 
   if (payload) {
     const formName = payload.form_name
