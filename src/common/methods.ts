@@ -448,6 +448,8 @@ export const getBannedIPs = () => {
   const sanityInstance = sanityClient({
     projectId: process.env.S_PID,
     dataset: process.env.S_DSET,
+    apiVersion: '2021-06-07',
+    useCdn: true,
   })
 
   return sanityInstance.fetch(`*[_type == "setting" && key == "banned:ip"].value`, {})
