@@ -168,7 +168,7 @@ const isSubmittingData = () =>
 async function onQueueSubmit(newTagSubmission) {
   const { tag, formAction, formData, storeAction } = newTagSubmission
   const ipAddress = await publicIp()
-  const bannedIPs = getBannedIPs()
+  const bannedIPs = await getBannedIPs()
   console.log({bannedIPs})
 
   // Check to see if IP address is banned

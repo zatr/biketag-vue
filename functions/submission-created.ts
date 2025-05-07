@@ -17,7 +17,7 @@ export const handler = async (event) => {
   let success = false
 
   console.log('submission-created', { payload })
-  const bannedIPs = getBannedIPs()
+  const bannedIPs = await getBannedIPs()
 
   if (bannedIPs.indexOf(payload.ip) !== -1) {
     console.error('ip address is banned', payload.ip)
