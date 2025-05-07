@@ -3,7 +3,7 @@
     <div ref="root" :class="[props.variant, 'button-group']">
       <div v-if="props.variant === 'current'">
         <!-- Left Button -->
-        <bike-tag-button class="button-group__left" :text="t('menu.last')" @click="emit('previous')" />
+        <bike-tag-button class="button-group__left" :text="t('menu.previous')" @click="emit('previous')" />
         <!-- Middle Button -->
         <bike-tag-button
           id="hint"
