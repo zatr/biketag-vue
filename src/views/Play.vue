@@ -113,7 +113,7 @@ import LineSvg from '@/assets/images/line.svg'
 import { dequeueErrorNotify, getBannedIPs, sendNetlifyError, sendNetlifyForm } from '@/common'
 import { BiketagQueueFormSteps } from '@/common/types'
 import { useBikeTagStore } from '@/store/index'
-import ipify from 'ipify'
+import { publicIp } from 'public-ip'
 import { computed, inject, onMounted, ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTimer } from 'vue-timer-hook'
@@ -167,7 +167,7 @@ const isSubmittingData = () =>
   )
 async function onQueueSubmit(newTagSubmission) {
   const { tag, formAction, formData, storeAction } = newTagSubmission
-  const ipAddress = await ipify()
+  const ipAddress = await publicIp()
   const bannedIPs = getBannedIPs()
 
   // Check to see if IP address is banned

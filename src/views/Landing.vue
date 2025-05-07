@@ -171,7 +171,7 @@ function closeMenu() {
 
 onMounted(() => {
   const domain = getDomainInfo(window)
-  
+
   if (domain.isSubdomain) {
     router.push({ name: 'Home' })
   }
