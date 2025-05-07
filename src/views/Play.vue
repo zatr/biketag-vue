@@ -113,6 +113,7 @@ import LineSvg from '@/assets/images/line.svg'
 import { dequeueErrorNotify, sendNetlifyError, sendNetlifyForm } from '@/common'
 import { BiketagQueueFormSteps } from '@/common/types'
 import { useBikeTagStore } from '@/store/index'
+import ipify from 'ipify'
 import { computed, inject, onMounted, ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTimer } from 'vue-timer-hook'
@@ -166,6 +167,13 @@ const isSubmittingData = () =>
   )
 async function onQueueSubmit(newTagSubmission) {
   const { tag, formAction, formData, storeAction } = newTagSubmission
+  const ipAddress = await ipify({useIPv6: false})
+
+  // Check to see if IP address is malicious
+  if (false) {
+    return
+  }
+
   if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual'
   }
@@ -194,6 +202,7 @@ async function onQueueSubmit(newTagSubmission) {
       'submission',
       `${getGameName.value}-${getPlayerTag.value.tagnumber}--${getPlayerTag.value.foundPlayer}`,
     )
+    formData.set('ip', ipAddress)
 
     if (tag.foundImage) {
       formData.set('foundImageUrl', getPlayerTag.value.foundImageUrl)

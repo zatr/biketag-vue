@@ -21,7 +21,8 @@ export const handler = async (event) => {
   if (payload) {
     const formName = payload.form_name
     const host = payload.site_url
-    const playerIP = payload.data?.playerId
+    const playerID = payload.data?.playerId
+    const playerIP = payload.data?.playerIP
     const tag = JSON.parse(payload.data?.tag ?? '{}')
     const gameName = payload.data?.game ?? tag.game ?? null
     let successfulEmailsSent: any = []
@@ -122,6 +123,7 @@ export const handler = async (event) => {
                   gameHost,
                   region: gameName,
                   playerIP,
+                  playerID,
                   currentMysteryImageUrl: currentMysteryTag?.mysteryImageUrl?.length
                     ? currentMysteryTag.mysteryImageUrl
                     : '',
@@ -163,6 +165,7 @@ export const handler = async (event) => {
                   game: gameName,
                   host,
                   playerIP,
+                  playerID,
                 }
               }
             },
@@ -248,6 +251,7 @@ export const handler = async (event) => {
                 host,
                 game: game.name,
                 playerIP,
+                playerID,
               }
             },
           )
