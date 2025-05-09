@@ -28,6 +28,10 @@ let storedRegionPolygon: any
 let bikeTagInitialized = false
 
 export const initBikeTagStore = () => {
+  if (localStorage.getItem('banned') === 'true') {
+    return
+  }
+
   if (!bikeTagInitialized) {
     bikeTagInitialized = true
     biketagGameOpts = { source: BikeTagDefaults.gameSource }
