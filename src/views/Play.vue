@@ -165,16 +165,17 @@ const isSubmittingData = () =>
     getFormStep.value === BiketagQueueFormSteps[BiketagQueueFormSteps.queuePosted] ||
     getFormStep.value === BiketagQueueFormSteps[BiketagQueueFormSteps.queuePostedShare]
   )
-async function onQueueSubmit(newTagSubmission) {
-  const { tag, formAction, formData, storeAction } = newTagSubmission
+async function onQueueSubmit(newTagSubmission) {  
   const ipAddress = await publicIp()
   const bannedIPs = await getBannedIPs()
-
+  
   // Check to see if IP address is banned
   if (bannedIPs.indexOf(ipAddress) !== -1) {
+    localStorage.setItem('banned', 'true')
     return
   }
-
+  
+  const { tag, formAction, formData, storeAction } = newTagSubmission
   if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual'
   }
