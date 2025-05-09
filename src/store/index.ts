@@ -986,6 +986,9 @@ export const useBikeTagStore = defineStore(BikeTagDefaults.store, {
     getGameNameProper(state) {
       return state.gameNameProper
     },
+    getGameNameUrl(state) {
+      return `https://${state.gameName}.biketag.org`
+    },
     getLogoUrl(state) {
       return (size = '', logo?: string, squared = false) => {
         logo = logo ? logo : state.game?.logo?.length ? state.game?.logo : undefined

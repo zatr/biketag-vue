@@ -157,6 +157,7 @@ const getGame = computed(() => store.getGame)
 const getProfile = computed(() => store.getProfile)
 const getGameName = computed(() => store.getGameName)
 const getPlayerId = computed(() => store.getPlayerId)
+const getPlayerName = computed(() => store.getPlayerName)
 
 // methods
 const isViewingQueue = () =>
@@ -265,6 +266,14 @@ const created = async () => {
   await store.isReady()
   await store.fetchCurrentBikeTag()
   await store.fetchQueuedTags(true)
+
+  if (getProfile.value?.nonce && !getPlayerName.value?.length) {
+    toast.open({
+        message: `you need to set your player name before you can create a post. go to ${store.getGameNameUrl}/profile to set it now.`,
+        type: 'error',
+        position: 'top',
+      })
+  }
 }
 created()
 
