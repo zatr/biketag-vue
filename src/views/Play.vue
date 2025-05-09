@@ -269,7 +269,7 @@ const created = async () => {
 
   if (getProfile.value?.nonce && !getPlayerName.value?.length) {
     toast.open({
-        message: `you need to set your player name before you can create a post. go to ${store.getGameNameUrl}/profile to set it now.`,
+        message: `you need to set your player name before you can create a post. go to <a href="${store.getGameNameUrl}/profile">your profile</a> to set it now.`,
         type: 'error',
         position: 'top',
       })
