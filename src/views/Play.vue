@@ -154,6 +154,7 @@ const getFormStep = computed(() => store.getFormStep)
 const getPlayerTag = computed(() => store.getPlayerTag)
 const getCurrentBikeTag = computed(() => store.getCurrentBikeTag)
 const getGame = computed(() => store.getGame)
+const getProfile = computed(() => store.getProfile)
 const getGameName = computed(() => store.getGameName)
 const getPlayerId = computed(() => store.getPlayerId)
 
@@ -177,7 +178,7 @@ async function onQueueSubmit(newTagSubmission) {
   }
 
   if (getGame.value.settings['post::only-logged-in'] === 'true') {
-    if (!store.getProfile.value?.sub) {
+    if (!getProfile.value?.sub) {
       toast.open({
         message: `this game now requires you to log in to create new BikeTag posts`,
         type: 'error',
