@@ -153,6 +153,7 @@ const { t } = useI18n()
 const getFormStep = computed(() => store.getFormStep)
 const getPlayerTag = computed(() => store.getPlayerTag)
 const getCurrentBikeTag = computed(() => store.getCurrentBikeTag)
+const getGame = computed(() => store.getGame)
 const getGameName = computed(() => store.getGameName)
 const getPlayerId = computed(() => store.getPlayerId)
 
@@ -173,6 +174,19 @@ async function onQueueSubmit(newTagSubmission) {
   if (bannedIPs.indexOf(ipAddress) !== -1) {
     localStorage.setItem('banned', 'true')
     return
+  }
+
+  if (getGame.value.settings['post::only-logged-in'] === 'true') {
+    if (!store.getProfile.value?.sub) {
+      toast.open({
+        message: `this game now requires you to log in to create new BikeTag posts`,
+        type: 'error',
+        position: 'top',
+      })
+      return
+    }
+
+    console.log('game is set to only allow logged in posts')
   }
   
   const { tag, formAction, formData, storeAction } = newTagSubmission
