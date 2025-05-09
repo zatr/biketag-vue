@@ -178,7 +178,7 @@ async function onQueueSubmit(newTagSubmission) {
   }
 
   if (getGame.value.settings['post::only-logged-in'] === 'true') {
-    if (!getProfile.value?.sub) {
+    if (!getProfile.value?.nonce) {
       toast.open({
         message: `this game now requires you to log in to create new BikeTag posts`,
         type: 'error',
