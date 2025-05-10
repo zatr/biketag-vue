@@ -44,10 +44,16 @@ export const autoPostNewBikeTags = async (): Promise<BackgroundProcessResults> =
     const games = gamesResponse.data as unknown as Game[]
 
     for (const game of games) {
+      if (game.settings.indexOf('queue::autoPost') === -1) {
+        console.log('autopost not set, skipping game', game.name)
+        continue
+      }
+
       const thisGameConfig = {
         game: game.slug,
         imgur: { hash: game.mainhash, queuehash: game.queuehash, archivehash: game.archivehash },
       }
+
       nonAdminBiketag.config(thisGameConfig)
       adminBiketag.config(thisGameConfig)
       const activeQueue = await getActiveQueueForGame(game, nonAdminBiketag)
