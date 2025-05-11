@@ -46,6 +46,7 @@ export const autoPostNewBikeTags = async (): Promise<BackgroundProcessResults> =
     for (const game of games) {
       if (game.settings.indexOf('queue::autoPost') === -1) {
         console.log('autopost not set, skipping game', game.name)
+        console.log('game.settings', game.settings)
         continue
       }
 
