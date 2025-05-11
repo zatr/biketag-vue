@@ -48,6 +48,8 @@ export const autoPostNewBikeTags = async (): Promise<BackgroundProcessResults> =
         console.log('autopost not set, skipping game', game.name)
         console.log('game.settings', game.settings)
         continue
+      } else {
+        console.log('autopost set, checking game', game.name)
       }
 
       const thisGameConfig = {
