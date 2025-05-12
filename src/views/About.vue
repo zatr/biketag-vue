@@ -5,7 +5,8 @@
       <!-- <h2>{{ $t('pages.about.title') }}</h2> -->
       <div class="about__block">
         <h3>
-          {{ $t('pages.about.article1.title') }} <img class="about__icon" :src="pin" alt="about" />
+          {{ $t('pages.about.about-game.title') }}
+          <img class="about__icon" :src="Pin" alt="about" />
         </h3>
         <hr class="about__hr" :style="`background-image: url(${styledHr})`" />
         <section-content filename="docs/about-game.html" />
@@ -15,12 +16,23 @@
             class="m-1 big-btn"
             onclick="window.open('https://patreon.com/biketag')"
           >
-            {{ $t('pages.about.article1.support_biketag') }}
+            {{ $t('pages.about.about-game.support_biketag') }}
           </bike-tag-button>
         </p>
       </div>
       <div class="about__block">
-        <h3>{{ $t('pages.about.article2.title') }}</h3>
+        <h3>
+          {{ $t('pages.about.about-biketags.title') }}
+          <img class="about__icon" :src="Bike" alt="about" />
+        </h3>
+        <hr class="about__hr" :style="`background-image: url(${styledHr})`" />
+        <section-content filename="docs/about-biketags.html" />
+      </div>
+      <div class="about__block">
+        <h3>
+          {{ $t('pages.about.about-app.title') }}
+          <img class="about__icon" :src="App" alt="about" />
+        </h3>
         <hr class="about__hr" :style="`background-image: url(${styledHr})`" />
         <section-content filename="docs/about-app.html" />
         <p>
@@ -29,14 +41,17 @@
             class="m-1 big-btn"
             onclick="window.open('https://patreon.com/biketag')"
           >
-            {{ $t('pages.about.article2.become_player') }}
+            {{ $t('pages.about.about-app.become_player') }}
           </bike-tag-button>
         </p>
       </div>
       <bike-tag-map variant="worldwide" />
       <bike-tag-games class="mt-5 mb-5" />
       <div class="about__block">
-        <h3>{{ $t('pages.about.article3.title') }}</h3>
+        <h3>
+          {{ $t('pages.about.about-profile.title') }}
+          <img class="about__icon" :src="Profile" alt="about" />
+        </h3>
         <hr class="about__hr" :style="`background-image: url(${styledHr})`" />
         <section-content filename="docs/about-profile.html" />
         <p>
@@ -45,12 +60,20 @@
             class="m-1 big-btn"
             @click="$router.push('/login')"
           >
-            {{ $t('pages.about.article3.create_profile') }}
+            {{ $t('pages.about.about-profile.create_profile') }}
           </bike-tag-button>
         </p>
       </div>
       <div class="about__block">
-        <h3>{{ $t('pages.about.article4.title') }}</h3>
+        <h3>
+          {{ $t('pages.about.about-donations.title') }}
+          <img class="about__icon" :src="Donate" alt="about" />
+        </h3>
+        <hr class="about__hr" :style="`background-image: url(${styledHr})`" />
+        <section-content filename="docs/about-donations.html" />
+      </div>
+      <div class="about__block">
+        <h3>{{ $t('pages.about.about-docs.title') }}</h3>
         <hr class="about__hr" :style="`background-image: url(${styledHr})`" />
         <section-content
           v-if="aboutOrganizationContent === ''"
@@ -74,21 +97,21 @@
             class="m-1 big-btn"
             @click="showContent('terms_of_service')"
           >
-            {{ $t('pages.about.article4.terms_of_service') }}
+            {{ $t('pages.about.about-docs.terms_of_service') }}
           </bike-tag-button>
           <bike-tag-button
             variant="medium-green"
             class="m-1 big-btn"
             @click="showContent('code_of_conduct')"
           >
-            {{ $t('pages.about.article4.code_of_conduct') }}
+            {{ $t('pages.about.about-docs.code_of_conduct') }}
           </bike-tag-button>
           <bike-tag-button
             variant="medium-purple"
             class="m-1 big-btn"
             @click="showContent('privacy_policy')"
           >
-            {{ $t('pages.about.article4.privacy_policy') }}
+            {{ $t('pages.about.about-docs.privacy_policy') }}
           </bike-tag-button>
         </p>
       </div>
@@ -97,20 +120,23 @@
 </template>
 
 <script setup name="AboutView">
-import { ref } from 'vue'
+import App from '@/assets/images/app-icon.svg'
+import Bike from '@/assets/images/bike.svg'
+import Donate from '@/assets/images/donate.svg'
 import StyledHr from '@/assets/images/hr.svg'
 import Pin from '@/assets/images/pin.svg'
+import Profile from '@/assets/images/profile-icon.svg'
+import { ref } from 'vue'
 
 // components
-import SectionContent from '@/components/SectionContent.vue'
 import BikeTagButton from '@/components/BikeTagButton.vue'
 import BikeTagGames from '@/components/BikeTagGames.vue'
 import BikeTagMap from '@/components/BikeTagMap.vue'
+import SectionContent from '@/components/SectionContent.vue'
 import { useI18n } from 'vue-i18n'
 
 // data
 const styledHr = StyledHr
-const pin = Pin
 const { t } = useI18n()
 const aboutOrganizationContent = ref('')
 const showOrganizationContent =
@@ -136,6 +162,10 @@ const showContent = (content) => (aboutOrganizationContent.value = content)
     }
   }
 }
+
+ul {
+  list-style-type: none;
+}
 </style>
 <style scoped lang="scss">
 @import '../assets/styles/style';
@@ -146,6 +176,11 @@ img {
 
 .about {
   flex-direction: column;
+
+  .about__icon {
+    width: 3rem;
+    height: 3rem;
+  }
 
   &__icon {
     width: unset;

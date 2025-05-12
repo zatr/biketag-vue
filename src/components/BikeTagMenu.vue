@@ -471,7 +471,6 @@ footer {
   flex-flow: wrap;
   flex-wrap: wrap;
   justify-content: center;
-  max-width: 20vw;
 
   .row {
     > div {

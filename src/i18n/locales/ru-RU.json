@@ -99,11 +99,11 @@
     },
     "about": {
       "title": "О ВЕЛОСИПЕДЕ",
-      "article1": {
+      "about-game": {
         "title": "Игра в байк-теги",
         "support_biketag": "Поддержите проект BikeTag на Patreon"
       },
-      "article2": {
+      "about-app": {
         "title": "Приложение Bike Tag",
         "become_player": "Стать подписывающимся игроком"
       }

@@ -209,19 +209,25 @@
     },
     "about": {
       "title": "ABOUT BIKE TAG",
-      "article1": {
+      "about-game": {
         "title": "The Bike Tag Game",
         "support_biketag": "Support the BikeTag Project on Patreon"
       },
-      "article2": {
+      "about-biketags": {
+        "title": "What Is A BikeTag?"
+      },
+      "about-donations": {
+        "title": "Donate To The BikeTag Project"
+      },
+      "about-app": {
         "title": "The Bike Tag App",
         "become_player": "Become a subscribing player"
       },
-      "article3": {
+      "about-profile": {
         "title": "BikeTag Player Profiles",
         "create_profile": "Login and create your BikeTag Player profile"
       },
-      "article4": {
+      "about-docs": {
         "title": "BikeTag Organization Information",
         "terms_of_service": "Read the Terms of Service",
         "privacy_policy": "Read the Privacy Policy",

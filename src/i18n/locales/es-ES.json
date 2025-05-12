@@ -127,15 +127,14 @@
     },
     "about": {
       "title": "ACERCA DE BIKE TAG",
-      "article1": {
+      "about-game": {
         "title": "El Juego de BIKE TAG",
         "support_biketag": "Apoye el Proyecto BikeTag en Patreon"
       },
-      "article2": {
+      "about-app": {
         "title": "La aplicación Bike Tag",
         "become_player": "Conviértete en un(a) jugador(a) suscrito(a)"
       }
     }
   }
 }
-  
