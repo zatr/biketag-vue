@@ -300,8 +300,8 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style lang="scss" scoped>
-@import '../assets/styles/style';
+<style lang="scss">
+@import '../assets/styles/_theme';
 
 .is-hidden {
   transform: translateY(-100%);
