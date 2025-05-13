@@ -53,14 +53,14 @@ const currentTagHandler = async (event) => {
         ).data,
         'utf-8',
       ).toString('base64')
+
+      return {
+        statusCode: 200,
+        isBase64Encoded: true,
+        body,
+      }
     } catch (error) {
       console.error('Error fetching image:', error)
-    }
-
-    return {
-      statusCode: 200,
-      isBase64Encoded: true,
-      body,
     }
   }
 
