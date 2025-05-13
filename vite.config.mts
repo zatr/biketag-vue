@@ -84,6 +84,7 @@ export default defineConfig({
     createHtmlPlugin(),
   ],
   build: {
+    cssCodeSplit: false,
     sourcemap: true,
     rollupOptions: {
       output: {
