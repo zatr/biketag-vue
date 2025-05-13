@@ -44,14 +44,18 @@ const currentTagHandler = async (event) => {
       }
     }
 
-    const body = Buffer.from(
-      (
-        await axios.get(data.imageUri, {
-          responseType: 'arraybuffer',
-        })
-      ).data,
-      'utf-8',
-    ).toString('base64')
+    try {
+      const body = Buffer.from(
+        (
+          await axios.get(data.imageUri, {
+            responseType: 'arraybuffer',
+          })
+        ).data,
+        'utf-8',
+      ).toString('base64')
+    } catch (error) {
+      console.error('Error fetching image:', error)
+    }
 
     return {
       statusCode: 200,
