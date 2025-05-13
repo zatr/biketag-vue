@@ -34,7 +34,7 @@ const currentTagHandler = async (event) => {
     const currentTag = currentTagResponse.data
     const data: any = currentTag
     const domainInfo = getDomainInfo(event)
-    data.host = domainInfo.host
+    data.host = 'i.imgur.com'
     data.imageUri = getImgurImageSized(data.mysteryImageUrl, biketagPayload.size)
 
     if (biketagPayload.data) {
