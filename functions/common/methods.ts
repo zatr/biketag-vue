@@ -857,7 +857,7 @@ export const getActiveQueueForGame = async (
   /// TODO: check for the right ambassador here
   const approvingAmbassadorIsApproved = approvingAmbassador?.length
 
-  // console.log({ autoPostSetting, game })
+  console.log({ autoPostSetting, game })
   if ((autoPostSetting && game.queuehash?.length) || approvingAmbassadorIsApproved) {
     /************** GET WINNING QUEUE *****************/
     adminBikeTag =
@@ -882,7 +882,15 @@ export const getActiveQueueForGame = async (
       if (completedTags.length) {
         const now = Date.now()
         const tagAutoPostTimer = 1000 * 60 * autoPostSetting
-        timedOutTags = completedTags.filter((t) => now - t.mysteryTime * 1000 > tagAutoPostTimer)
+        console.log({ now, tagAutoPostTimer })
+        timedOutTags = completedTags.filter((t) => {
+          console.log({
+            diff: now - t.mysteryTime * 1000,
+            mysteryTime: t.mysteryTime,
+            timedOut: now - t.mysteryTime * 1000 > tagAutoPostTimer,
+          })
+          return now - t.mysteryTime * 1000 > tagAutoPostTimer
+        })
 
         if (timedOutTags.length) {
           const orderedTimedOutTags = timedOutTags.sort((t1, t2) => t1.mysteryTime - t2.mysteryTime)
