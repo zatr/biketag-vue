@@ -34,7 +34,8 @@ const currentTagHandler = async (event) => {
     const currentTag = currentTagResponse.data
     const data: any = currentTag
     const domainInfo = getDomainInfo(event)
-    data.host = 'i.imgur.com'
+    const host = 'i.imgur.com'
+    data.host = domainInfo.host
     data.imageUri = getImgurImageSized(data.mysteryImageUrl, biketagPayload.size)
 
     if (biketagPayload.data) {
@@ -49,6 +50,9 @@ const currentTagHandler = async (event) => {
         (
           await axios.get(data.imageUri, {
             responseType: 'arraybuffer',
+            headers: {
+              host,
+            },
           })
         ).data,
         'utf-8',
