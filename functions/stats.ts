@@ -1,7 +1,7 @@
 import { builder, Handler } from '@netlify/functions'
 import { BikeTagClient } from 'biketag'
 import { getPlayersPayload, getTagsPayload } from 'biketag/dist/common/payloads'
-import { Game, Player } from 'biketag/dist/common/schema'
+import { Game, Player, Tag } from 'biketag/dist/common/schema'
 import request from 'request'
 import { getBikeTagClientOpts, getPayloadOpts } from './common'
 import { getTagDate } from '../src/common'
@@ -114,25 +114,36 @@ function getPlayerTagLongestStreakData(
 ): {} {
   let tagDates : Date[] = getPlayerUniqueTagDates(player);
   tagDates.sort((a, b) => a.getTime() - b.getTime());
-
-  let streakData : {} = {};
+  let streakDaysCount : number | null = null;
   let streakStartDate : Date | null = null;
   let streakEndDate : Date | null = null;
-  let streakDays : number = 1;
+  let onStreak : boolean = false;
   for (const td of tagDates) {
-    const tagDatePlusOneDay : Date = new Date(td.getDate() + 1);
+    const tagDateMinusOneDay : Date = new Date(td.getDate() - 1);
     const index : number = tagDates.indexOf(td);
-    const indexPlusOneDate = tagDates[index+1]
-    if (tagDatePlusOneDay === indexPlusOneDate) {
-      streakEndDate = indexPlusOneDate;
-      streakDays++;
+    if (index === 0) {
+      continue;
     } else {
-      streakStartDate = td;
-      streakDays = 1;
+      const indexMinusOneDate = tagDates[index-1]
+      if (getIsSameDay(tagDateMinusOneDay, indexMinusOneDate)) {
+        if (!onStreak) {
+          streakStartDate = indexMinusOneDate;
+        }
+        streakEndDate = td;
+        onStreak = true;
+      } else {
+        onStreak = false;
+      }
     }
   }
-  streakData = {
-    'longestStreakDaysCount': streakDays,
+  if (streakStartDate != null && streakEndDate != null) {
+    const oneDay = 24 * 60 * 60 * 1000;
+    const diffTime = streakEndDate.getTime() - streakStartDate.getTime();
+    streakDaysCount = Math.round(diffTime / oneDay) + 1;
+  }
+
+  const streakData : {} = {
+    'longestStreakDaysCount': streakDaysCount,
     'longestStreakStartDate': streakStartDate,
     'longestStreakEndDate': streakEndDate,
   }
@@ -169,6 +180,30 @@ function getPlayersDataWithLongestStreakDaysTagged(
     }
   }
   return longestStreakPlayersData;
+}
+
+/**
+ * Get the longest time between tags
+ * @param tags The array of tags
+ * @returns Time between tags
+ */
+function getLongestTimeBetweenTags(
+  tags: Tag[]
+): number {
+  let longestTimeBetweenTags : number = 0;
+  let previousTag : Tag | null = null;
+  for (const tag of tags) {
+    if (longestTimeBetweenTags === 0) {
+      continue;
+    } else {
+      const timeBetweenTags : number = tag.mysteryTime - previousTag.mysteryTime
+      if (timeBetweenTags > longestTimeBetweenTags) {
+        longestTimeBetweenTags = timeBetweenTags;
+      }
+    }
+    previousTag = tag;
+  }
+  return longestTimeBetweenTags;
 }
 
 const statsHandler: Handler = async (event) => {
@@ -216,8 +251,7 @@ const statsHandler: Handler = async (event) => {
   const totalNumberOfTags : number = tagsResponse.data.length;
 
   // Longest time between tags
-  // TODO
-  const longestTimeBetweenTags : null = null;
+  const longestTimeBetweenTags : number = getLongestTimeBetweenTags(tagsResponse.data);
 
   let statusCode : number = 400;
   if (playersResponse.status === 200 && tagsResponse.status === 200) {
