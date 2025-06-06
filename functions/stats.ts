@@ -44,9 +44,10 @@ function getPlayerHighestNumberTagsPerDayData(
       tagsPerDay = 1;
     }
     if (tagsPerDay > tagsPerDayHighest) {
+      tagsPerDayHighest = tagsPerDay;
       tagsPerDayData = {
         'playerName': player.name,
-        'tagCount': tagsPerDay,
+        'tagCount': tagsPerDayHighest,
         'tagDate': tagDate,
       }
     }
