@@ -29,15 +29,15 @@ function getIsSameDay(
 function getPlayerHighestNumberTagsPerDayData(
   player: Player
 ): {} {
-  let tagsPerDayData : {} = {
+  let tagsPerDayData: {} = {
     'tagCount': 0,
     'tagDate': new Date()
   };
-  let tagsPerDay : number = 1;
-  let tagsPerDayHighest : number = 1;
-  let previousTagDate : Date | null = null;
+  let tagsPerDay: number = 1;
+  let tagsPerDayHighest: number = 1;
+  let previousTagDate: Date | null = null;
   for (const tag of player.tags) {
-    const tagDate : Date = getTagDate(tag.mysteryTime);
+    const tagDate: Date = getTagDate(tag.mysteryTime);
     if (previousTagDate != null && getIsSameDay(tagDate, previousTagDate)) {
       tagsPerDay++;
     } else {
@@ -45,8 +45,9 @@ function getPlayerHighestNumberTagsPerDayData(
     }
     if (tagsPerDay > tagsPerDayHighest) {
       tagsPerDayData = {
+        'playerName': player.name,
         'tagCount': tagsPerDay,
-        'tagDate': tagDate
+        'tagDate': tagDate,
       }
     }
     previousTagDate = tagDate;
@@ -62,16 +63,16 @@ function getPlayerHighestNumberTagsPerDayData(
 function getPlayersWithHighestNumberTagsPerDayData(
   players: Player[]
 ): Array<{}> {
-  let tagsPerDayHighest : number = 0;
-  let tagsPerDayData : Array<{}> = [];
+  let tagsPerDayHighest: number = 0;
+  let tagsPerDayData: Array<{}> = [];
   for (const player of players) {
-    const tagsPerDayRecord : {} = getPlayerHighestNumberTagsPerDayData(player);
+    const tagsPerDayRecord: {} = getPlayerHighestNumberTagsPerDayData(player);
     tagsPerDayData.push(tagsPerDayRecord);
     if (tagsPerDayRecord['tagCount'] > tagsPerDayHighest) {
       tagsPerDayHighest = tagsPerDayRecord['tagCount'];
     }
   }
-  let highestTagsPerDayData : Array<{}> = [];
+  let highestTagsPerDayData: Array<{}> = [];
   for (const tpdr of tagsPerDayData) {
     if (tpdr['tagCount'] >= tagsPerDayHighest) {
       highestTagsPerDayData.push(tpdr);
@@ -88,19 +89,22 @@ function getPlayersWithHighestNumberTagsPerDayData(
 function getPlayerUniqueTagDates(
   player: Player
 ): Date[] {
-  let uniqueTagDates : Date[] = [];
+  let uniqueTagDates: Date[] = [];
   for (const tag of player.tags) {
-      const tagDate : Date = getTagDate(tag.mysteryTime);
-      if (uniqueTagDates.length === 0) {
+    if (tag.mysteryTime === 0) {
+      // There are some mysteryTime entries with 0 value. Ignore them.
+      continue;
+    }
+    const tagDate: Date = getTagDate(tag.mysteryTime);
+    if (uniqueTagDates.length === 0) {
+      uniqueTagDates.push(tagDate);
+    } else {
+      const isAlreadyPresent = uniqueTagDates.some(date => getIsSameDay(date, tagDate));
+      if (!isAlreadyPresent) {
         uniqueTagDates.push(tagDate);
-      } else {
-        for (const utd of uniqueTagDates) {
-          if (!getIsSameDay(utd, tagDate)) {
-            uniqueTagDates.push(tagDate);
-          }
-        }
       }
     }
+  }
   return uniqueTagDates;
 }
 
@@ -112,37 +116,49 @@ function getPlayerUniqueTagDates(
 function getPlayerTagLongestStreakData(
   player: Player
 ): {} {
-  let tagDates : Date[] = getPlayerUniqueTagDates(player);
+  let tagDates: Date[] = getPlayerUniqueTagDates(player);
   tagDates.sort((a, b) => a.getTime() - b.getTime());
-  let streakDaysCount : number | null = null;
-  let streakStartDate : Date | null = null;
-  let streakEndDate : Date | null = null;
-  let onStreak : boolean = false;
+  let streakDaysCount: number = 1;
+  let streakDaysCountLongest: number = 1;
+  let streakStartDate: Date | null = null;
+  let streakEndDate: Date | null = null;
+  let onActualStreak: boolean = false;
+  const oneDay: number = (24 * 60 * 60 * 1000) * 1;
   for (const td of tagDates) {
-    const tagDateMinusOneDay : Date = new Date(td.getDate() - 1);
-    const index : number = tagDates.indexOf(td);
+    if (!onActualStreak) {
+      streakStartDate = td;
+      streakEndDate = td;
+    }
+    const index: number = tagDates.indexOf(td);
     if (index === 0) {
+      // Need a previous date to compare with, skip the first
       continue;
     } else {
-      const indexMinusOneDate = tagDates[index-1]
+      // Determine if an actual (more than 1 day) streak started: Calculate the current tag 
+      // mysteryTime minus one day, check if same date as previous array tag mysteryTime
+      const tagDateMinusOneDay: Date = new Date();
+      tagDateMinusOneDay.setTime(td.getTime() - oneDay);
+      const indexMinusOneDate = tagDates[index - 1]
       if (getIsSameDay(tagDateMinusOneDay, indexMinusOneDate)) {
-        if (!onStreak) {
+        if (!onActualStreak) {
           streakStartDate = indexMinusOneDate;
         }
         streakEndDate = td;
-        onStreak = true;
+        onActualStreak = true;
+        if (streakStartDate != null && streakEndDate != null) {
+          // Calculate streak days, including both end dates
+          const diffTime = streakEndDate.getTime() - streakStartDate.getTime();
+          streakDaysCount = Math.round(diffTime / oneDay) + 1;
+          if (streakDaysCount > streakDaysCountLongest) {
+            streakDaysCountLongest = streakDaysCount;
+          }
+        }
       } else {
-        onStreak = false;
+        onActualStreak = false;
       }
     }
   }
-  if (streakStartDate != null && streakEndDate != null) {
-    const oneDay = 24 * 60 * 60 * 1000;
-    const diffTime = streakEndDate.getTime() - streakStartDate.getTime();
-    streakDaysCount = Math.round(diffTime / oneDay) + 1;
-  }
-
-  const streakData : {} = {
+  const streakData: {} = {
     'longestStreakDaysCount': streakDaysCount,
     'longestStreakStartDate': streakStartDate,
     'longestStreakEndDate': streakEndDate,
@@ -159,23 +175,23 @@ function getPlayerTagLongestStreakData(
 function getPlayersDataWithLongestStreakDaysTagged(
   players: Player[]
 ): Array<{}> {
-  let longestStreakDays : number = 0;
-  let playerRecord : {};
-  let playersData : Array<{}> = [];
+  let longestStreakDays: number = 0;
+  let playerRecord: {};
+  let playersData: Array<{}> = [];
   for (const player of players) {
     const playerLongestStreakData = getPlayerTagLongestStreakData(player)
-    if (playerLongestStreakData['streakDaysCount'] > longestStreakDays) {
+    if (playerLongestStreakData['longestStreakDaysCount'] > longestStreakDays) {
       longestStreakDays = playerLongestStreakData['longestStreakDaysCount'];
     }
     playerRecord = {
-      'player': player,
+      'playerName': player.name,
       'longestStreakData': playerLongestStreakData
     }
     playersData.push(playerRecord);
   }
-  let longestStreakPlayersData : Array<{}> = [];
+  let longestStreakPlayersData: Array<{}> = [];
   for (const pd of playersData) {
-    if (pd['longestStreakDays'] >= longestStreakDays) {
+    if (pd['longestStreakData']['longestStreakDaysCount'] >= longestStreakDays) {
       longestStreakPlayersData.push(pd);
     }
   }
@@ -190,13 +206,16 @@ function getPlayersDataWithLongestStreakDaysTagged(
 function getLongestTimeBetweenTags(
   tags: Tag[]
 ): number {
-  let longestTimeBetweenTags : number = 0;
-  let previousTag : Tag | null = null;
-  for (const tag of tags) {
-    if (longestTimeBetweenTags === 0) {
+  let longestTimeBetweenTags: number = 0;
+  let previousTag: Tag | null = null;
+  // tags.sort((a, b) => (a.tagNumber < b.tagNumber ? -1 : 1));
+  for (const tag of tags.reverse()) {
+    if (tags.indexOf(tag) === 0) {
+      // Need a previous tag to compare with. Skip the first.
+      previousTag = tag;
       continue;
     } else {
-      const timeBetweenTags : number = tag.mysteryTime - previousTag.mysteryTime
+      const timeBetweenTags: number = tag.mysteryTime - previousTag.mysteryTime
       if (timeBetweenTags > longestTimeBetweenTags) {
         longestTimeBetweenTags = timeBetweenTags;
       }
@@ -230,30 +249,28 @@ const statsHandler: Handler = async (event) => {
   const playersResponse = await biketag.getPlayers(biketagPayload as getPlayersPayload, {
     source: 'imgur',
   })
-  console.log(`getPlayers response: ${playersResponse}`);
 
   // Player(s) with most tags in one day (total, time)
-  const playersWithMostTagsInOneDayData : {} = getPlayersWithHighestNumberTagsPerDayData(playersResponse.data)
+  const playersWithMostTagsInOneDayData: {} = getPlayersWithHighestNumberTagsPerDayData(playersResponse.data)
 
   // Players with longest streak of days with a tag (total days, start time, end time)
-  const playersWithLongestTagStreakDaysData : {} = getPlayersDataWithLongestStreakDaysTagged(playersResponse.data)
+  const playersWithLongestTagStreakDaysData: {} = getPlayersDataWithLongestStreakDaysTagged(playersResponse.data)
 
   // Total number of players
-  const totalNumberOfPlayers : number = playersResponse.data.length;
+  const totalNumberOfPlayers: number = playersResponse.data.length;
 
   // Get Tags data
   const tagsResponse = await biketag.getTags(biketagPayload as getTagsPayload, {
     source: 'imgur',
   })
-  console.log(`getTags response: ${tagsResponse}`);
 
   // Total number of tags
-  const totalNumberOfTags : number = tagsResponse.data.length;
+  const totalNumberOfTags: number = tagsResponse.data.length;
 
   // Longest time between tags
-  const longestTimeBetweenTags : number = getLongestTimeBetweenTags(tagsResponse.data);
+  const longestTimeBetweenTags: number = getLongestTimeBetweenTags(tagsResponse.data);
 
-  let statusCode : number = 400;
+  let statusCode: number = 400;
   if (playersResponse.status === 200 && tagsResponse.status === 200) {
     statusCode = 200;
   }
@@ -265,7 +282,7 @@ const statsHandler: Handler = async (event) => {
     'totalNumberOfTags': totalNumberOfTags,
     'longestTimeBetweenTags': longestTimeBetweenTags
   }
-  const statsResponse : {} = {
+  const statsResponse: {} = {
     'data': data,
     'success': success,
     'error': !success ? 'Something went wrong' : undefined,
