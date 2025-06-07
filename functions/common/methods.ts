@@ -675,13 +675,17 @@ export const sendEmailsToAmbassadors = async (
   ambassadors: Ambassador[],
   getEmailData: (a?: Ambassador) => any,
   sendToAdmin = false,
+  isNewBikeTagMessage = false
 ): Promise<{ accepted: any[]; rejected: any[] }> => {
   if (!(process.env.G_EMAIL && process.env.G_PASS))
     return Promise.resolve({ accepted: [], rejected: [ErrorMessage.EmailNotConfigured] })
-
   let emailSent
   let accepted = []
   let rejected = []
+  if (isNewBikeTagMessage) {
+    console.log('This is a new bike tag submitted message. It was flagged to not send.');
+    return { accepted, rejected };
+  }
   const defaultEmailData = {
     host: 'eh?',
     subdomainIcon: '/images/BikeTag.svg',
@@ -1123,9 +1127,8 @@ export const getBikeTagAuth0Profile = async (
     page: 0,
     per_page: 1,
     include_totals: false,
-    fields: `${restrictUserMeta ? 'user_metadata.social,user_metadata.options' : 'user_metadata'}${
-      authorized ? ',sub,user_metadata.name,user_metadata.passcode' : ''
-    }`,
+    fields: `${restrictUserMeta ? 'user_metadata.social,user_metadata.options' : 'user_metadata'}${authorized ? ',sub,user_metadata.name,user_metadata.passcode' : ''
+      }`,
     q: `user_metadata.name:"${name}"`,
     search_engine: 'v3',
   }
@@ -1254,19 +1257,19 @@ export const sendBikeTagPostNotificationToBlueSky = async (
         createdAt: timestamp,
         facets: gameLinkFacet.length
           ? [
-              {
-                index: {
-                  byteStart: gameLinkFacet[0],
-                  byteEnd: gameLinkFacet[1],
-                },
-                features: [
-                  {
-                    $type: 'app.bsky.richtext.facet#link',
-                    uri: link,
-                  },
-                ],
+            {
+              index: {
+                byteStart: gameLinkFacet[0],
+                byteEnd: gameLinkFacet[1],
               },
-            ]
+              features: [
+                {
+                  $type: 'app.bsky.richtext.facet#link',
+                  uri: link,
+                },
+              ],
+            },
+          ]
           : [],
         embed: {
           $type: 'app.bsky.embed.external',
