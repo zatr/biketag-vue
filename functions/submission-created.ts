@@ -119,7 +119,6 @@ export const handler = async (event) => {
           break
         case 'post-new-biketag':
           // send app notification
-          const isNewBikeTagMessage: boolean = true;
           emailSent = await sendEmailsToAmbassadors(
             formName,
             `A new BikeTag has been submitted for round #${tag.tagnumber} in [${gameName}]`,
@@ -177,7 +176,6 @@ export const handler = async (event) => {
                 }
               }
             },
-            isNewBikeTagMessage
           )
           successfulEmailsSent = successfulEmailsSent.concat(emailSent.accepted)
           rejectedEmails = rejectedEmails.concat(emailSent.rejected)

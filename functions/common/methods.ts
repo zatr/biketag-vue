@@ -25,6 +25,7 @@ import {
 import { BikeTagProfile } from '../../src/common/types'
 import { ErrorMessage, HttpStatusCode, JSONModels } from './constants'
 import { BackgroundProcessResults, activeQueue } from './types'
+import { flags } from '../../src/featureFlags'
 
 const ajv = new Ajv()
 export const getBikeTagHash = (val: string): string => md5(`${val}${process.env.HOST_KEY}`)
@@ -675,14 +676,13 @@ export const sendEmailsToAmbassadors = async (
   ambassadors: Ambassador[],
   getEmailData: (a?: Ambassador) => any,
   sendToAdmin = false,
-  isNewBikeTagMessage = false
 ): Promise<{ accepted: any[]; rejected: any[] }> => {
   if (!(process.env.G_EMAIL && process.env.G_PASS))
     return Promise.resolve({ accepted: [], rejected: [ErrorMessage.EmailNotConfigured] })
   let emailSent
   let accepted = []
   let rejected = []
-  if (isNewBikeTagMessage) {
+  if (flags.isNewBikeTagMessage) {
     console.log('This is a new bike tag submitted message. It was flagged to not send.');
     return { accepted, rejected };
   }
