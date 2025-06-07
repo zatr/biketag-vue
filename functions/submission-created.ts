@@ -155,10 +155,12 @@ export const handler = async (event) => {
                   currentMysteryBlurb:
                     'This is the current mystery location. You can see the full screen image in the app, if you need to, by clicking the button below.',
                   ambassadorsUrl: `${gameHost}/queue?btaId=${a.id}`,
-                  redditLink: `https://reddit.com/r/${game.subreddit?.length ? game.subreddit : 'biketag'
-                    }`,
-                  blueskyLink: `https://bsky.app/profile/${game.bsky?.length ? game.bsky : 'biketag.bsky.social'
-                    }`,
+                  redditLink: `https://reddit.com/r/${
+                    game.subreddit?.length ? game.subreddit : 'biketag'
+                  }`,
+                  blueskyLink: `https://bsky.app/profile/${
+                    game.bsky?.length ? game.bsky : 'biketag.bsky.social'
+                  }`,
                   // instagramLink: `https://www.reddit.com/r/${game. ?? 'biketag'}`,
                   expiryHash: getEncodedExpiry({
                     btaId: a.id,
