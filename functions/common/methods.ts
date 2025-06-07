@@ -682,8 +682,8 @@ export const sendEmailsToAmbassadors = async (
   let emailSent
   let accepted = []
   let rejected = []
-  if (flags.isNewBikeTagMessage) {
-    console.log('This is a new bike tag submitted message. It was flagged to not send.');
+  if (flags.sendEmailForNewBikeTags) {
+    console.log('Send email for new bike tags is disabled. Not sending.');
     return { accepted, rejected };
   }
   const defaultEmailData = {

@@ -1,3 +1,3 @@
 export const flags = {
-    'isNewBikeTagMessage': false
+    'sendEmailForNewBikeTags': false
 }
