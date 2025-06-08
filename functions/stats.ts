@@ -109,6 +109,12 @@ function getPlayerUniqueTagDates(
   return uniqueTagDates;
 }
 
+interface StreakData {
+  longestStreakDaysCount: number;
+  longestStreakStartDate: Date | null;
+  longestStreakEndDate: Date | null;
+}
+
 /**
  * Get the player's longest streak of days with a tag data
  * @param player Player to get longest streak of days with a tag data
@@ -116,57 +122,56 @@ function getPlayerUniqueTagDates(
  */
 function getPlayerTagLongestStreakData(
   player: Player
-): {} {
+): StreakData {
   let tagDates: Date[] = getPlayerUniqueTagDates(player);
   tagDates.sort((a, b) => a.getTime() - b.getTime());
   let streakDaysCount: number = 1;
   let streakDaysCountLongest: number = 1;
   let streakStartDate: Date | null = null;
   let streakEndDate: Date | null = null;
-  let onActualStreak: boolean = false;
+  let previousDate: Date | null = null;
   const oneDay: number = (24 * 60 * 60 * 1000) * 1;
   for (const td of tagDates) {
-    if (!onActualStreak) {
-      streakStartDate = td;
-      streakEndDate = td;
-    }
     const index: number = tagDates.indexOf(td);
-    if (index === 0) {
-      // Need a previous date to compare with, skip the first
-      continue;
-    } else {
+    if (previousDate != null) {
       // Determine if an actual (more than 1 day) streak started: Calculate the current tag 
       // mysteryTime minus one day, check if same date as previous array tag mysteryTime
       const tagDateMinusOneDay: Date = new Date();
       tagDateMinusOneDay.setTime(td.getTime() - oneDay);
-      const indexMinusOneDate = tagDates[index - 1]
-      if (getIsSameDay(tagDateMinusOneDay, indexMinusOneDate)) {
-        if (!onActualStreak) {
-          streakStartDate = indexMinusOneDate;
-        }
-        streakEndDate = td;
-        onActualStreak = true;
-        if (streakStartDate != null && streakEndDate != null) {
-          // Calculate streak days, including both end dates
-          const diffTime = streakEndDate.getTime() - streakStartDate.getTime();
-          streakDaysCount = Math.round(diffTime / oneDay) + 1;
-          if (streakDaysCount > streakDaysCountLongest) {
-            streakDaysCountLongest = streakDaysCount;
+      if (getIsSameDay(tagDateMinusOneDay, previousDate)) {
+        streakDaysCount++;
+        if (streakDaysCount >= streakDaysCountLongest) {
+          if (streakDaysCount === 2) {
+            // Current streak start
+            streakStartDate = previousDate;
           }
+          // Current streak end
+          streakDaysCountLongest = streakDaysCount;
+          streakEndDate = td;
         }
       } else {
-        onActualStreak = false;
+        // The streak is over
+        streakDaysCount = 1;
       }
+    } else {
+      // Set streak start/end dates for players without an actual streak (>1 day)
+      streakStartDate = td;
+      streakEndDate = td;
     }
+    previousDate = td;
   }
-  const streakData: {} = {
-    'longestStreakDaysCount': streakDaysCount,
-    'longestStreakStartDate': streakStartDate,
-    'longestStreakEndDate': streakEndDate,
+  const streakData: StreakData = {
+    longestStreakDaysCount: streakDaysCountLongest,
+    longestStreakStartDate: streakStartDate,
+    longestStreakEndDate: streakEndDate,
   }
   return streakData;
 }
 
+interface PlayerStreakData {
+  playerName: string;
+  longestStreakData: StreakData;
+}
 
 /**
  * Get the players data with the longest streak of days tagged
@@ -175,24 +180,24 @@ function getPlayerTagLongestStreakData(
  */
 function getPlayersDataWithLongestStreakDaysTagged(
   players: Player[]
-): Array<{}> {
+): PlayerStreakData[] {
   let longestStreakDays: number = 0;
-  let playerRecord: {};
-  let playersData: Array<{}> = [];
+  let playerRecord: PlayerStreakData;
+  let playersData: PlayerStreakData[] = [];
   for (const player of players) {
     const playerLongestStreakData = getPlayerTagLongestStreakData(player)
-    if (playerLongestStreakData['longestStreakDaysCount'] > longestStreakDays) {
-      longestStreakDays = playerLongestStreakData['longestStreakDaysCount'];
+    if (playerLongestStreakData.longestStreakDaysCount > longestStreakDays) {
+      longestStreakDays = playerLongestStreakData.longestStreakDaysCount;
     }
     playerRecord = {
-      'playerName': player.name,
-      'longestStreakData': playerLongestStreakData
+      playerName: player.name,
+      longestStreakData: playerLongestStreakData
     }
     playersData.push(playerRecord);
   }
-  let longestStreakPlayersData: Array<{}> = [];
+  let longestStreakPlayersData: PlayerStreakData[] = [];
   for (const pd of playersData) {
-    if (pd['longestStreakData']['longestStreakDaysCount'] >= longestStreakDays) {
+    if (pd.longestStreakData.longestStreakDaysCount >= longestStreakDays) {
       longestStreakPlayersData.push(pd);
     }
   }
@@ -209,13 +214,9 @@ function getLongestTimeBetweenTags(
 ): number {
   let longestTimeBetweenTags: number = 0;
   let previousTag: Tag | null = null;
-  // tags.sort((a, b) => (a.tagNumber < b.tagNumber ? -1 : 1));
-  for (const tag of tags.reverse()) {
-    if (tags.indexOf(tag) === 0) {
-      // Need a previous tag to compare with. Skip the first.
-      previousTag = tag;
-      continue;
-    } else {
+  const sortedTags = [...tags].reverse();
+  for (const tag of sortedTags) {
+    if (previousTag != null) {
       const timeBetweenTags: number = tag.mysteryTime - previousTag.mysteryTime
       if (timeBetweenTags > longestTimeBetweenTags) {
         longestTimeBetweenTags = timeBetweenTags;
@@ -234,6 +235,12 @@ const statsHandler: Handler = async (event) => {
     } as unknown as request.Request,
     true,
   )
+  if (!biketagOpts.game) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ success: false, error: 'Game parameter is required' }),
+    }
+  }
   const biketag = new BikeTagClient(biketagOpts)
   const game = (await biketag.game(biketagOpts.game, {
     source: 'sanity',
