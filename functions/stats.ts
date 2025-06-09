@@ -49,7 +49,6 @@ function getIsWithinDaysRange(
   d2: Date,
   days: number
 ): boolean {
-  const oneDay: number = (24 * 60 * 60 * 1000) * 1;
   const diffDays = getDaysDifference(d1, d2);
   return diffDays <= days;
 }
