@@ -450,7 +450,7 @@ const statsHandler: Handler = async (event) => {
     gameLongestDailyTagStreakData: gameLongestDailyTagStreakData,
     gameLongestTimeBetweenTags: longestTimeBetweenTags
   }
-  const statsResponse: {} = {
+  const statsResponse: StatsResponse = {
     data: success ? data : undefined,
     success: success,
     error: !success ? 'Failed to retrieve stats' : undefined,
