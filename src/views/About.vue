@@ -177,14 +177,14 @@ img {
 .about {
   flex-direction: column;
 
-  .about__icon {
-    width: 3rem;
-    height: 3rem;
-  }
-
   &__icon {
     width: unset;
     margin-left: 1rem;
+  }
+
+  .about__icon {
+    width: 3rem;
+    height: 3rem;
   }
 
   &__block {
