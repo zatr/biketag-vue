@@ -4,7 +4,7 @@ import { getPlayersPayload, getTagsPayload } from 'biketag/dist/common/payloads'
 import { Game, Player, Tag } from 'biketag/dist/common/schema'
 import request from 'request'
 import { getTagDate } from '../src/common'
-import { getBikeTagClientOpts, getPayloadOpts } from './common'
+import { convertMiliseconds, getBikeTagClientOpts, getPayloadOpts } from './common'
 
 /**
  * Check if two date objects are on the same date
@@ -334,6 +334,13 @@ function getPlayersWithLongestDailyTagStreakData(
   return longestStreakPlayersData
 }
 
+interface gameLongestTimeBetweenTagsData {
+  timeBetweenTagsDays: number
+  startDate: Date | null
+  staleTagNumber: number
+  endDate: Date | null
+}
+
 /**
  * Get the longest time between tags
  * @param tags The array of tags
@@ -341,20 +348,31 @@ function getPlayersWithLongestDailyTagStreakData(
  */
 function getLongestTimeBetweenTags(
   tags: Tag[]
-): number {
+): gameLongestTimeBetweenTagsData {
   let longestTimeBetweenTags: number = 0
+  let startDate: Date | null = null
+  let endDate: Date | null = null
   let previousTag: Tag | null = null
-  const sortedTags = [...tags].reverse()
+  let staleTagNumber = 0
+  const sortedTags: Tag[] = [...tags].reverse()
   for (const tag of sortedTags) {
     if (previousTag !== null) {
       const timeBetweenTags: number = tag.mysteryTime - previousTag.mysteryTime
       if (timeBetweenTags > longestTimeBetweenTags) {
         longestTimeBetweenTags = timeBetweenTags
+        startDate = new Date(previousTag.mysteryTime * 1000)
+        endDate = new Date(tag.mysteryTime * 1000)
+        staleTagNumber = previousTag.tagnumber
       }
     }
     previousTag = tag
   }
-  return longestTimeBetweenTags
+  return {
+    timeBetweenTagsDays: convertMiliseconds(longestTimeBetweenTags * 1000, 'd') as number,
+    startDate,
+    endDate,
+    staleTagNumber,
+  }
 }
 
 interface StatsReportData {
@@ -365,7 +383,7 @@ interface StatsReportData {
   gameHighestNumberTagsPerOneDayData: GameHighestNumberTagsPerNumberDaysData,
   gameHighestNumberTagsPerSevenDaysData: GameHighestNumberTagsPerNumberDaysData,
   gameLongestDailyTagStreakData: StreakData,
-  gameLongestTimeBetweenTags: number
+  gameLongestTimeBetweenTags: gameLongestTimeBetweenTagsData
 }
 
 interface StatsResponse {
@@ -433,7 +451,7 @@ const statsHandler: Handler = async (event) => {
   const gameLongestDailyTagStreakData: StreakData = getTagLongestDailyStreakData(tagsResponse.data)
 
   // Longest time between tags
-  const longestTimeBetweenTags: number = getLongestTimeBetweenTags(tagsResponse.data)
+  const longestTimeBetweenTags: gameLongestTimeBetweenTagsData = getLongestTimeBetweenTags(tagsResponse.data)
 
   let statusCode: number = 400
   if (playersResponse.status === 200 && tagsResponse.status === 200) {
