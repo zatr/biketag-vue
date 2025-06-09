@@ -188,6 +188,10 @@ function getPlayersWithHighestNumberTagsPerDayData(
   let tagsPerDayData: PlayerHighestNumberTagsPerDayData[] = [];
   let highestTagsPerDayData: PlayerHighestNumberTagsPerDayData[] = [];
   for (const player of players) {
+    if (player.name === '') {
+      console.log('Player has no name, and probably no real data. Ignoring player: ', player)
+      continue;
+    }
     const tagsPerDayRecord: PlayerHighestNumberTagsPerDayData = getPlayerHighestNumberTagsPerDayData(player);
     tagsPerDayData.push(tagsPerDayRecord);
     if (tagsPerDayRecord.tagCount != null && tagsPerDayRecord.tagCount > tagsPerDayHighest) {
@@ -307,6 +311,10 @@ function getPlayersWithLongestDailyTagStreakData(
   let playerRecord: PlayerStreakData;
   let playersData: PlayerStreakData[] = [];
   for (const player of players) {
+    if (player.name === '') {
+      console.log('Player has no name, and probably no real data. Ignoring player: ', player)
+      continue;
+    }
     const playerLongestStreakData: StreakData = getTagLongestDailyStreakData(player.tags)
     if (playerLongestStreakData.longestStreakDaysCount > longestStreakDays) {
       longestStreakDays = playerLongestStreakData.longestStreakDaysCount;
