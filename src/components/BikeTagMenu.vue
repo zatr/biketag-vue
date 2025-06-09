@@ -301,6 +301,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss">
+/* stylelint-disable scss/load-no-partial-leading-underscore */
 @import '../assets/styles/_theme';
 
 .is-hidden {
