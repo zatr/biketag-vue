@@ -168,10 +168,10 @@ const isSubmittingData = () =>
     getFormStep.value === BiketagQueueFormSteps[BiketagQueueFormSteps.queuePosted] ||
     getFormStep.value === BiketagQueueFormSteps[BiketagQueueFormSteps.queuePostedShare]
   )
-async function onQueueSubmit(newTagSubmission) {  
+async function onQueueSubmit(newTagSubmission) {
   const ipAddress = await publicIp()
   const bannedIPs = await getBannedIPs()
-  
+
   // Check to see if IP address is banned
   if (bannedIPs.indexOf(ipAddress) !== -1) {
     localStorage.setItem('banned', 'true')
@@ -190,7 +190,7 @@ async function onQueueSubmit(newTagSubmission) {
 
     console.log('game is set to only allow logged in posts')
   }
-  
+
   const { tag, formAction, formData, storeAction } = newTagSubmission
   if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual'
@@ -269,10 +269,10 @@ const created = async () => {
 
   if (getProfile.value?.nonce && !getPlayerName.value?.length) {
     toast.open({
-        message: `you need to set your player name before you can create a post. go to <a href="${store.getGameNameUrl}/profile">your profile</a> to set it now.`,
-        type: 'error',
-        position: 'top',
-      })
+      message: `you need to set your player name before you can create a post. go to <a href="${store.getGameNameUrl}/profile">your profile</a> to set it now.`,
+      type: 'error',
+      position: 'top',
+    })
   }
 }
 created()
