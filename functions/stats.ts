@@ -22,16 +22,141 @@ function getIsSameDay(
 }
 
 /**
+ * Get difference in days between two Dates
+ * @param d1 Date 1
+ * @param d2 Date 2
+ * @returns Number of days betwteen two dates
+ */
+function getDaysDifference(
+  d1: Date,
+  d2: Date,
+): number {
+  const timeDiff = Math.abs(d2.getTime() - d1.getTime());
+  const dateDiff = d2.getTime() - d2.getTime();
+  const oneDay: number = (24 * 60 * 60 * 1000) * 1;
+  const diffDays = Math.ceil(timeDiff / oneDay);
+  return diffDays;
+}
+
+/**
+ * Check if two Dates are within a range of days
+ * @param d1 Date 1
+ * @param d2 Date 2
+ * @param days Number of days to check for range
+ * @returns Number of days betwteen two dates
+ */
+function getIsWithinDaysRange(
+  d1: Date,
+  d2: Date,
+  days: number
+): boolean {
+  const oneDay: number = (24 * 60 * 60 * 1000) * 1;
+  const diffDays = getDaysDifference(d1, d2);
+  return diffDays <= days;
+}
+
+interface GameHighestNumberTagsPerNumberDaysData {
+  tagCount: number;
+  dayCount: number;
+  startDate: Date | null;
+  endDate: Date | null;
+}
+/**
+ * Get game highest number of tags in specified number of days
+ * @param tags Tags to get highest number of tags in days data
+ * @param days Number of days
+ * @returns Highest number of tags per number of days data
+ */
+function getGameHighestNumberTagsPerNumberDaysData(
+  tags: Tag[],
+  days: number = 1
+): GameHighestNumberTagsPerNumberDaysData {
+  let tagsPerNumberDaysHighest: number = 1;
+  let previousTagDate: Date | null = null;
+  let startDate: Date | null = null;
+  let endDate: Date | null = null;
+  let tagDatesInRange: Tag[] = [];
+  let tagIsInRange: boolean = false;
+  let tagsPerNumberDaysData: GameHighestNumberTagsPerNumberDaysData = {
+    tagCount: tagsPerNumberDaysHighest,
+    dayCount: days,
+    startDate: previousTagDate,
+    endDate: previousTagDate
+  }
+  const oneDay: number = (24 * 60 * 60 * 1000) * 1;
+  const daysBack: number[] = [...Array(days).keys()];
+  const sortedTags = [...tags].reverse();
+  for (const tag of sortedTags) {
+    const tagDate: Date = getTagDate(tag.mysteryTime);
+    if (previousTagDate != null) {
+      if (tagDatesInRange.length === 0) {
+        // Initialize the array with the first date
+        tagDatesInRange = [previousTagDate];
+      }
+      // Clone the array so it can be modified while iterating
+      let tagDatesInRangeNew = Object.assign([], tagDatesInRange);
+      for (const dayBack of daysBack) {
+        // Calculate the date for the number of days back in time
+        const daysBackTime: number = oneDay * dayBack;
+        const tagDateMinusDayBack: Date = new Date();
+        tagDateMinusDayBack.setTime(tagDate.getTime() - daysBackTime);
+        for (const tid of tagDatesInRange) {
+          // Check if the current tagDate is within acceptable range of days
+          if (getIsWithinDaysRange(tid, tagDateMinusDayBack, days)) {
+            tagDatesInRangeNew.push(tagDate);
+            tagIsInRange = true;
+            // Quit checking if it is in acceptable range of days
+            break;
+          } else {
+            // Remove the old index that is no longer in the sliding range window
+            const indexNotInRangeDate = tagDatesInRangeNew.indexOf(tid);
+            tagDatesInRangeNew.splice(indexNotInRangeDate, 1);
+            tagIsInRange = false;
+          }
+        }
+        if (tagIsInRange) {
+          // Quit checking if it is already confirmed to be in range
+          break;
+        }
+      }
+      // Update the main array with the new one
+      tagDatesInRange = tagDatesInRangeNew;
+      if (tagDatesInRange.length >= tagsPerNumberDaysHighest) {
+        // Set stats to be reported if the previous tag number record was beat
+        tagsPerNumberDaysHighest = tagDatesInRange.length;
+        startDate = tagDatesInRange[0];
+        endDate = tagDatesInRange[tagDatesInRange.length - 1];
+      }
+    }
+    previousTagDate = tagDate;
+  }
+  tagsPerNumberDaysData = {
+    tagCount: tagsPerNumberDaysHighest,
+    dayCount: days,
+    startDate: startDate,
+    endDate: endDate
+  }
+  return tagsPerNumberDaysData;
+}
+
+interface PlayerHighestNumberTagsPerDayData {
+  playerName: string,
+  tagCount: number | null,
+  tagDate: Date | null
+}
+
+/**
  * Get player's highest number of tags in one day data
  * @param player Player to get highest number of tags in one day data
  * @returns Highest number of tags per day data
  */
 function getPlayerHighestNumberTagsPerDayData(
   player: Player
-): {} {
-  let tagsPerDayData: {} = {
-    'tagCount': 0,
-    'tagDate': new Date()
+): PlayerHighestNumberTagsPerDayData {
+  let tagsPerDayData: PlayerHighestNumberTagsPerDayData = {
+    playerName: player.name,
+    tagCount: null,
+    tagDate: null
   };
   let tagsPerDay: number = 1;
   let tagsPerDayHighest: number = 1;
@@ -45,11 +170,8 @@ function getPlayerHighestNumberTagsPerDayData(
     }
     if (tagsPerDay > tagsPerDayHighest) {
       tagsPerDayHighest = tagsPerDay;
-      tagsPerDayData = {
-        'playerName': player.name,
-        'tagCount': tagsPerDayHighest,
-        'tagDate': tagDate,
-      }
+      tagsPerDayData.tagCount = tagsPerDayHighest;
+      tagsPerDayData.tagDate = tagDate;
     }
     previousTagDate = tagDate;
   }
@@ -63,19 +185,19 @@ function getPlayerHighestNumberTagsPerDayData(
  */
 function getPlayersWithHighestNumberTagsPerDayData(
   players: Player[]
-): Array<{}> {
+): PlayerHighestNumberTagsPerDayData[] {
   let tagsPerDayHighest: number = 0;
-  let tagsPerDayData: Array<{}> = [];
+  let tagsPerDayData: PlayerHighestNumberTagsPerDayData[] = [];
+  let highestTagsPerDayData: PlayerHighestNumberTagsPerDayData[] = [];
   for (const player of players) {
-    const tagsPerDayRecord: {} = getPlayerHighestNumberTagsPerDayData(player);
+    const tagsPerDayRecord: PlayerHighestNumberTagsPerDayData = getPlayerHighestNumberTagsPerDayData(player);
     tagsPerDayData.push(tagsPerDayRecord);
-    if (tagsPerDayRecord['tagCount'] > tagsPerDayHighest) {
-      tagsPerDayHighest = tagsPerDayRecord['tagCount'];
+    if (tagsPerDayRecord.tagCount != null && tagsPerDayRecord.tagCount > tagsPerDayHighest) {
+      tagsPerDayHighest = tagsPerDayRecord.tagCount;
     }
   }
-  let highestTagsPerDayData: Array<{}> = [];
   for (const tpdr of tagsPerDayData) {
-    if (tpdr['tagCount'] >= tagsPerDayHighest) {
+    if (tpdr.tagCount != null && tpdr.tagCount >= tagsPerDayHighest) {
       highestTagsPerDayData.push(tpdr);
     }
   }
@@ -83,15 +205,15 @@ function getPlayersWithHighestNumberTagsPerDayData(
 }
 
 /**
- * Get the player's unique tag dates
- * @param player Player to get unique tag dates
+ * Get the unique tag dates
+ * @param tags Tags to get unique tag dates
  * @returns Array of unique tag dates
  */
-function getPlayerUniqueTagDates(
-  player: Player
+function getUniqueTagDates(
+  tags: Tag[]
 ): Date[] {
   let uniqueTagDates: Date[] = [];
-  for (const tag of player.tags) {
+  for (const tag of tags) {
     if (tag.mysteryTime === 0) {
       // There are some mysteryTime entries with 0 value. Ignore them.
       continue;
@@ -116,23 +238,23 @@ interface StreakData {
 }
 
 /**
- * Get the player's longest streak of days with a tag data
- * @param player Player to get longest streak of days with a tag data
- * @returns Object containing longest streak days count, streak start date, streak end date
+ * Get the longest daily tag streak data
+ * @param tags Tags to get longest streak of days with a tag data
+ * @returns StreakData
  */
-function getPlayerTagLongestStreakData(
-  player: Player
+function getTagLongestDailyStreakData(
+  tags: Tag[]
 ): StreakData {
-  let tagDates: Date[] = getPlayerUniqueTagDates(player);
+  let tagDates: Date[] = getUniqueTagDates(tags);
   tagDates.sort((a, b) => a.getTime() - b.getTime());
   let streakDaysCount: number = 1;
   let streakDaysCountLongest: number = 1;
   let streakStartDate: Date | null = null;
+  let streakLongestStartDate: Date | null = null;
   let streakEndDate: Date | null = null;
   let previousDate: Date | null = null;
   const oneDay: number = (24 * 60 * 60 * 1000) * 1;
   for (const td of tagDates) {
-    const index: number = tagDates.indexOf(td);
     if (previousDate != null) {
       // Determine if an actual (more than 1 day) streak started: Calculate the current tag 
       // mysteryTime minus one day, check if same date as previous array tag mysteryTime
@@ -140,13 +262,15 @@ function getPlayerTagLongestStreakData(
       tagDateMinusOneDay.setTime(td.getTime() - oneDay);
       if (getIsSameDay(tagDateMinusOneDay, previousDate)) {
         streakDaysCount++;
+        if (streakDaysCount === 2) {
+          // Current streak start
+          streakStartDate = previousDate;
+        }
         if (streakDaysCount >= streakDaysCountLongest) {
-          if (streakDaysCount === 2) {
-            // Current streak start
-            streakStartDate = previousDate;
-          }
-          // Current streak end
+          // Current longest streak start
+          streakLongestStartDate = streakStartDate;
           streakDaysCountLongest = streakDaysCount;
+          // Current longest streak end
           streakEndDate = td;
         }
       } else {
@@ -162,7 +286,7 @@ function getPlayerTagLongestStreakData(
   }
   const streakData: StreakData = {
     longestStreakDaysCount: streakDaysCountLongest,
-    longestStreakStartDate: streakStartDate,
+    longestStreakStartDate: streakLongestStartDate,
     longestStreakEndDate: streakEndDate,
   }
   return streakData;
@@ -174,18 +298,18 @@ interface PlayerStreakData {
 }
 
 /**
- * Get the players data with the longest streak of days tagged
+ * Get the players data with the longest daily tag streak
  * @param players The array of players
  * @returns Array of players data with longest streak of days tagged
  */
-function getPlayersDataWithLongestStreakDaysTagged(
+function getPlayersWithLongestDailyTagStreakData(
   players: Player[]
 ): PlayerStreakData[] {
   let longestStreakDays: number = 0;
   let playerRecord: PlayerStreakData;
   let playersData: PlayerStreakData[] = [];
   for (const player of players) {
-    const playerLongestStreakData = getPlayerTagLongestStreakData(player)
+    const playerLongestStreakData: StreakData = getTagLongestDailyStreakData(player.tags)
     if (playerLongestStreakData.longestStreakDaysCount > longestStreakDays) {
       longestStreakDays = playerLongestStreakData.longestStreakDaysCount;
     }
@@ -227,6 +351,17 @@ function getLongestTimeBetweenTags(
   return longestTimeBetweenTags;
 }
 
+interface StatsReportData {
+  playersWithMostTagsInOneDay: PlayerHighestNumberTagsPerDayData[],
+  playersWithLongestTagStreakDaysData: PlayerStreakData[],
+  gameTotalNumberOfPlayers: number,
+  gameTotalNumberOfTags: number,
+  gameHighestNumberTagsPerOneDayData: GameHighestNumberTagsPerNumberDaysData,
+  gameHighestNumberTagsPerSevenDaysData: GameHighestNumberTagsPerNumberDaysData,
+  gameLongestDailyTagStreakData: StreakData,
+  gameLongestTimeBetweenTags: number
+}
+
 const statsHandler: Handler = async (event) => {
   const biketagOpts = getBikeTagClientOpts(
     {
@@ -258,13 +393,13 @@ const statsHandler: Handler = async (event) => {
     source: 'imgur',
   })
 
-  // Player(s) with most tags in one day (total, time)
-  const playersWithMostTagsInOneDayData: {} = getPlayersWithHighestNumberTagsPerDayData(playersResponse.data)
+  // Player(s) with most tags in one day
+  const playersWithMostTagsInOneDayData: PlayerHighestNumberTagsPerDayData[] = getPlayersWithHighestNumberTagsPerDayData(playersResponse.data)
 
-  // Players with longest streak of days with a tag (total days, start time, end time)
-  const playersWithLongestTagStreakDaysData: {} = getPlayersDataWithLongestStreakDaysTagged(playersResponse.data)
+  // Player(s) with longest streak of daily tags
+  const playersWithLongestTagStreakDaysData: PlayerStreakData[] = getPlayersWithLongestDailyTagStreakData(playersResponse.data)
 
-  // Total number of players
+  // Game total number of players
   const totalNumberOfPlayers: number = playersResponse.data.length;
 
   // Get Tags data
@@ -272,8 +407,18 @@ const statsHandler: Handler = async (event) => {
     source: 'imgur',
   })
 
-  // Total number of tags
+  // Game total number of tags
   const totalNumberOfTags: number = tagsResponse.data.length;
+
+  // Game most tags in one day
+  const gameHighestNumberTagsPerOneDayData: GameHighestNumberTagsPerNumberDaysData = getGameHighestNumberTagsPerNumberDaysData(tagsResponse.data);
+
+  // Game most tags in one week
+  const days = 7;
+  const gameHighestNumberTagsPerSevenDaysData: GameHighestNumberTagsPerNumberDaysData = getGameHighestNumberTagsPerNumberDaysData(tagsResponse.data, days);
+
+  // Game longest streak of daily tags
+  const gameLongestDailyTagStreakData: StreakData = getTagLongestDailyStreakData(tagsResponse.data)
 
   // Longest time between tags
   const longestTimeBetweenTags: number = getLongestTimeBetweenTags(tagsResponse.data);
@@ -283,12 +428,15 @@ const statsHandler: Handler = async (event) => {
     statusCode = 200;
   }
   const success = playersResponse.success && tagsResponse.success;
-  const data = {
-    'playersWithMostTagsInOneDay': playersWithMostTagsInOneDayData,
-    'playersWithLongestTagStreakDaysData': playersWithLongestTagStreakDaysData,
-    'totalNumberOfPlayers': totalNumberOfPlayers,
-    'totalNumberOfTags': totalNumberOfTags,
-    'longestTimeBetweenTags': longestTimeBetweenTags
+  const data: StatsReportData = {
+    playersWithMostTagsInOneDay: playersWithMostTagsInOneDayData,
+    playersWithLongestTagStreakDaysData: playersWithLongestTagStreakDaysData,
+    gameTotalNumberOfPlayers: totalNumberOfPlayers,
+    gameTotalNumberOfTags: totalNumberOfTags,
+    gameHighestNumberTagsPerOneDayData: gameHighestNumberTagsPerOneDayData,
+    gameHighestNumberTagsPerSevenDaysData: gameHighestNumberTagsPerSevenDaysData,
+    gameLongestDailyTagStreakData: gameLongestDailyTagStreakData,
+    gameLongestTimeBetweenTags: longestTimeBetweenTags
   }
   const statsResponse: {} = {
     'data': data,
