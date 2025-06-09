@@ -32,7 +32,6 @@ function getDaysDifference(
   d2: Date,
 ): number {
   const timeDiff = Math.abs(d2.getTime() - d1.getTime());
-  const dateDiff = d2.getTime() - d2.getTime();
   const oneDay: number = (24 * 60 * 60 * 1000) * 1;
   const diffDays = Math.ceil(timeDiff / oneDay);
   return diffDays;
@@ -286,8 +285,8 @@ function getTagLongestDailyStreakData(
   }
   const streakData: StreakData = {
     longestStreakDaysCount: streakDaysCountLongest,
-    longestStreakStartDate: streakLongestStartDate,
-    longestStreakEndDate: streakEndDate,
+    longestStreakStartDate: streakDaysCountLongest > 1 ? streakLongestStartDate : null,
+    longestStreakEndDate: streakDaysCountLongest > 1 ? streakEndDate : null,
   }
   return streakData;
 }
