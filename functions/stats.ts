@@ -78,8 +78,8 @@ function getGameHighestNumberTagsPerNumberDaysData(
   let tagsPerNumberDaysData: GameHighestNumberTagsPerNumberDaysData = {
     tagCount: tagsPerNumberDaysHighest,
     dayCount: days,
-    startDate: previousTagDate,
-    endDate: previousTagDate
+    startDate: null,
+    endDate: null
   }
   const oneDay: number = (24 * 60 * 60 * 1000) * 1;
   const daysBack: number[] = [...Array(days).keys()];
