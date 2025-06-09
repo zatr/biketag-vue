@@ -360,6 +360,12 @@ interface StatsReportData {
   gameLongestTimeBetweenTags: number
 }
 
+interface StatsResponse {
+  data?: StatsReportData;
+  success: boolean;
+  error?: string;
+}
+
 const statsHandler: Handler = async (event) => {
   const biketagOpts = getBikeTagClientOpts(
     {
@@ -437,13 +443,13 @@ const statsHandler: Handler = async (event) => {
     gameLongestTimeBetweenTags: longestTimeBetweenTags
   }
   const statsResponse: {} = {
-    'data': data,
-    'success': success,
-    'error': !success ? 'Something went wrong' : undefined,
+    data: success ? data : undefined,
+    success: success,
+    error: !success ? 'Failed to retrieve stats' : undefined,
   }
   return {
     statusCode: statusCode,
-    body: JSON.stringify(success ? data : statsResponse),
+    body: JSON.stringify(statsResponse),
   }
 }
 
