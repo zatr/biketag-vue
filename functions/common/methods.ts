@@ -25,7 +25,6 @@ import {
 import { BikeTagProfile } from '../../src/common/types'
 import { ErrorMessage, HttpStatusCode, JSONModels } from './constants'
 import { BackgroundProcessResults, activeQueue } from './types'
-import { flags } from '../../src/featureFlags'
 
 const ajv = new Ajv()
 export const getBikeTagHash = (val: string): string => md5(`${val}${process.env.HOST_KEY}`)
@@ -671,6 +670,7 @@ export const getEncodedExpiry = (data = {}, days = 2) => {
 }
 
 export const sendEmailsToAmbassadors = async (
+  game: Game,
   emailName: string,
   emailSubject: string,
   ambassadors: Ambassador[],
@@ -682,8 +682,10 @@ export const sendEmailsToAmbassadors = async (
   let emailSent
   let accepted = []
   let rejected = []
-  if (flags.sendEmailForNewBikeTags) {
-    console.log('Send email for new bike tags is disabled. Not sending.');
+  const sendAllEmails: boolean = game.settings['emails::sendall']
+  const extraEmailNames: string[] = game.settings['emails::extras']
+  if (!sendAllEmails && extraEmailNames.includes(emailName)) {
+    console.log(`Send all emails is disabled. Will not send extra email ${emailName}`)
     return { accepted, rejected };
   }
   const defaultEmailData = {
@@ -1484,6 +1486,7 @@ export const sendNewBikeTagNotifications = async (
     // console.log('emailing', { thisGamesAmbassadors })
     notificationPromises.push(
       sendEmailsToAmbassadors(
+        game,
         'biketag-auto-posted',
         `New BikeTag Round (#${winningTagnumber}) Auto-Posted for [${game.name}]`,
         thisGamesAmbassadors,
