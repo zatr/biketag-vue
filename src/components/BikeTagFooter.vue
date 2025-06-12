@@ -63,7 +63,7 @@
       </div>
     </div>
     <!-- World -->
-    <div class="button-reset-container">
+    <div class="button-reset-container biketag-world">
       <bike-tag-button class="button-reset" variant="circle" @click="goWorldwide">
         <img class="footer-image" src="@/assets/images/npworld.webp" alt="BikeTag World Wide" />
       </bike-tag-button>
@@ -310,5 +310,9 @@ onBeforeUnmount(() => {
   &__right {
     margin-left: 0.5rem;
   }
+}
+
+.biketag-world {
+  justify-content: center;
 }
 </style>
