@@ -110,6 +110,11 @@ export enum BikeTagSettingsKeys {
   BlueskyHandle = 'social::bluesky',
   InstagramHandle = 'social::instagram',
   FacebookHandle = 'social::facebook',
+  SupportsReddit = 'social::post-to-reddit',
+  SupportsBluesky = 'social::post-to-bluesky',
+  SupportsInstagram = 'social::post-to-instagram',
+  SupportsFacebook = 'social::post-to-facebook',
+  
 }
 
 export enum BikeTagEvent {
