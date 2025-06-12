@@ -106,9 +106,14 @@ export enum BiketagQueueFormSteps {
 export enum BikeTagSettingsKeys {
   AutoPost = 'queue::autoPost',
   Jingle = 'easter::jingle',
-  SupportsReddit = 'social::reddit',
-  SupportsBluesky = 'social::bluesky',
-  SupportsInstagram = 'social::instagram',
+  RedditHandle = 'social::reddit',
+  BlueskyHandle = 'social::bluesky',
+  InstagramHandle = 'social::instagram',
+  FacebookHandle = 'social::facebook',
+  SupportsReddit = 'social::post-to-reddit',
+  SupportsBluesky = 'social::post-to-bluesky',
+  SupportsInstagram = 'social::post-to-instagram',
+  SupportsFacebook = 'social::post-to-facebook',
 }
 
 export enum BikeTagEvent {
