@@ -670,7 +670,6 @@ export const getEncodedExpiry = (data = {}, days = 2) => {
 }
 
 export const sendEmailsToAmbassadors = async (
-  game: Game,
   emailName: string,
   emailSubject: string,
   ambassadors: Ambassador[],
@@ -682,12 +681,6 @@ export const sendEmailsToAmbassadors = async (
   let emailSent
   let accepted = []
   let rejected = []
-  const sendAllEmails: boolean = game.settings['emails::sendall']
-  const extraEmailNames: string[] = game.settings['emails::extras']
-  if (!sendAllEmails && extraEmailNames.includes(emailName)) {
-    console.log(`Send all emails is disabled. Will not send extra email ${emailName}`)
-    return { accepted, rejected };
-  }
   const defaultEmailData = {
     host: 'eh?',
     subdomainIcon: '/images/BikeTag.svg',
@@ -1482,11 +1475,10 @@ export const sendNewBikeTagNotifications = async (
     )
   }
 
-  if (!skipEmails) {
+  if (!skipEmails && (game.settings['emails::disable']?.indexOf('new-biketag-notification') !== -1)) {
     // console.log('emailing', { thisGamesAmbassadors })
     notificationPromises.push(
       sendEmailsToAmbassadors(
-        game,
         'biketag-auto-posted',
         `New BikeTag Round (#${winningTagnumber}) Auto-Posted for [${game.name}]`,
         thisGamesAmbassadors,
@@ -1515,6 +1507,8 @@ export const sendNewBikeTagNotifications = async (
         return results.accepted.concat(results.rejected)
       }),
     )
+  } else {
+    console.log('Send all emails is disabled. Will not send extra email biketag-auto-posted')
   }
 
   return notificationPromises
