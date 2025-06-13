@@ -109,7 +109,7 @@ export const handler = async (event) => {
       const gameHost = `${host.replace('://', `://${gameName}.`)}`
       const tagQueuedNumber = stringifyNumber(numberInQueue)
 
-      if (!game.settings['emails::sendall'] || game.settings['emails::sendall']  === 'true' || game.settings['emails::disable']?.indexOf(formName) === -1) {
+      if (!game.settings['emails::sendall'] || game.settings['emails::sendall']  === 'true' || game.settings['emails::disable']?.split(',').indexOf(formName) === -1) {
         console.log('processing form::', formName)
         switch (formName) {
           case 'add-found-tag':

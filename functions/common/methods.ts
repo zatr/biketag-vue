@@ -1313,7 +1313,7 @@ export const sendBikeTagPostNotificationToWebhook = (
     foundTime: currentTag.foundTime,
     tz: game.region.tz,
   })
-  
+
   let data = {}
   switch (type) {
     case 'discord':
@@ -1480,7 +1480,7 @@ export const sendNewBikeTagNotifications = async (
     console.log('skipping posting of social notifications')
   }
 
-  if (!skipEmails && (!game.settings['emails::disable'] || game.settings['emails::disable'].indexOf('new-biketag-notification') === -1)) {
+  if (!skipEmails && (!game.settings['emails::disable'] || game.settings['emails::disable'].split(',').indexOf('new-biketag-notification') === -1)) {
     // console.log('emailing', { thisGamesAmbassadors })
     notificationPromises.push(
       sendEmailsToAmbassadors(
