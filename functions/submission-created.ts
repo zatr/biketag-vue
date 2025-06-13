@@ -110,15 +110,15 @@ export const handler = async (event) => {
       const tagQueuedNumber = stringifyNumber(numberInQueue)
 
       console.log('processing form::', formName)
-      switch (formName) {
-        case 'add-found-tag':
-          // send app notification
-          break
-        case 'add-mystery-tag':
-          // send app notification
-          break
-        case 'post-new-biketag':
-          if (game.settings['emails::sendall'] || game.settings['emails::extra']?.indexOf(formName) !== -1) {
+      if (game.settings['emails::sendall'] || game.settings['emails::extra']?.indexOf(formName) !== -1) {
+        switch (formName) {
+          case 'add-found-tag':
+            // send app notification
+            break
+          case 'add-mystery-tag':
+            // send app notification
+            break
+          case 'post-new-biketag':
             // send app notification
             emailSent = await sendEmailsToAmbassadors(
               formName,
@@ -156,12 +156,10 @@ export const handler = async (event) => {
                     currentMysteryBlurb:
                       'This is the current mystery location. You can see the full screen image in the app, if you need to, by clicking the button below.',
                     ambassadorsUrl: `${gameHost}/queue?btaId=${a.id}`,
-                    redditLink: `https://reddit.com/r/${
-                      game.subreddit?.length ? game.subreddit : 'biketag'
-                    }`,
-                    blueskyLink: `https://bsky.app/profile/${
-                      game.bsky?.length ? game.bsky : 'biketag.bsky.social'
-                    }`,
+                    redditLink: `https://reddit.com/r/${game.subreddit?.length ? game.subreddit : 'biketag'
+                      }`,
+                    blueskyLink: `https://bsky.app/profile/${game.bsky?.length ? game.bsky : 'biketag.bsky.social'
+                      }`,
                     // instagramLink: `https://www.reddit.com/r/${game. ?? 'biketag'}`,
                     expiryHash: getEncodedExpiry({
                       btaId: a.id,
@@ -173,6 +171,7 @@ export const handler = async (event) => {
                   return {
                     payload: JSON.stringify(payload),
                     game: gameName,
+                    tagnumber: tag.tagnumber,
                     host,
                     playerIP,
                     playerID,
@@ -183,95 +182,94 @@ export const handler = async (event) => {
             successfulEmailsSent = successfulEmailsSent.concat(emailSent.accepted)
             rejectedEmails = rejectedEmails.concat(emailSent.rejected)
             break
-          } else {
-            console.log(`Send all emails is disabled. Will not send extra email ${formName}`)
-          }
-        case 'approve-new-biketag':
-          /// Deprecated
-          // send app notification
-          // console.log('are there quedTags?', queuedTags)
-          // if (queuedTags.length) {
-          //   qeueCleared = await archiveAndClearQueue(queuedTags, game)
-          //   success = !qeueCleared.errors
-          //   emailSent = await sendEmailsToAmbassadors(
-          //     formName,
-          //     `${queuedTags.length} Tags left in the round were added to the archive`,
-          //     thisGamesAmbassadors,
-          //     (a) => {
-          //       if (a) {
-          //         return {
-          //           tag,
-          //           host,
-          //           logo,
-          //           gameHost,
-          //           region: gameName,
-          //           playerIP,
-          //           currentMysteryImageUrl: currentMysteryTag?.mysteryImageUrl?.length
-          //             ? currentMysteryTag.mysteryImageUrl
-          //             : '',
-          //           mysteryImageUrl: tag?.mysteryImageUrl?.length ? tag.mysteryImageUrl : '',
-          //           foundImageUrl: tag?.foundImageUrl?.length ? tag.foundImageUrl : '',
-          //           goCurrentMystery: 'SEE CURRENT MYSTERY',
-          //           currentMysteryHint: `current hint: "${currentMysteryTag?.hint}"`,
-          //           footerText:
-          //             'BikeTag is an OpenSource project that you can contribute to anytime',
-          //           goToQueueButton: 'GO TO QUEUE',
-          //           newBikeTagPlayedText: 'A new round of BikeTag has been queued!',
-          //           mainTitleText: `this is the ${tagQueuedNumber} tag to be queue for round #${tag?.tagnumber}`,
-          //           mainParagraphText: autoPostEnabled
-          //             ? 'Your game of BikeTag has AutoPost enabled, and the first tag submitted will be chosen as the winner at the end of the AutoPost timer of 15 minutes.'
-          //             : 'You must approve the winning tag before the game can move on to the next round.',
-          //           goToApproveButton: 'Go to the Queue now to approve/dequeue this submission',
-          //           goToWebsiteLink: `or go to ${gameHost}/login`,
-          //           comparisonText: 'FOUND TAG COMPARED TO CURRENT MYSTERY LOCATION',
-          //           foundLocation: 'FOUND HERE',
-          //           foundTagBlurb: `This is what the player [${tag.foundPlayer}] submitted as the found location image and information. If there is a problem with this submission, please go to the Queue to resolve the issue.`,
-          //           currentMysteryBlurb:
-          //             'This is the current mystery location. You can see the full screen image in the app, if you need to, by clicking the button below.',
-          //           ambassadorsUrl: `${gameHost}/queue?btaId=${a.id}`,
-          //           redditLink: `https://reddit.com/r/${
-          //             game.subreddit?.length ? game.subreddit : 'biketag'
-          //           }`,
-          //           blueskyLink: `https://bsky.app/profile/${
-          //             game.bsky?.length ? game.bsky : 'biketag.bsky.social'
-          //           }`,
-          //           // instagramLink: `https://www.reddit.com/r/${game. ?? 'biketag'}`,
-          //         }
-          //       } else {
-          //         return {
-          //           payload: JSON.stringify(payload),
-          //           game: gameName,
-          //           host,
-          //           playerIP,
-          //         }
-          //       }
-          //     },
-          //   )
-          //   successfulEmailsSent = successfulEmailsSent.concat(emailSent.accepted)
-          //   rejectedEmails = rejectedEmails.concat(emailSent.rejected)
-          // }
-          break
-        default:
-        case 'approve-tag-error':
-        case 'post-tag-error':
-          emailSent = await sendEmailsToAmbassadors(
-            game,
-            formName,
-            `An error has occured for [${game.name}] BikeTag`,
-            thisGamesAmbassadors,
-            () => {
-              return {
-                payload: JSON.stringify(payload),
-                host,
-                game: game.name,
-                playerIP,
-                playerID,
-              }
-            },
-          )
-          successfulEmailsSent = successfulEmailsSent.concat(emailSent.accepted)
-          rejectedEmails = rejectedEmails.concat(emailSent.rejected)
-          break
+          case 'approve-new-biketag':
+            /// Deprecated
+            // send app notification
+            // console.log('are there quedTags?', queuedTags)
+            // if (queuedTags.length) {
+            //   qeueCleared = await archiveAndClearQueue(queuedTags, game)
+            //   success = !qeueCleared.errors
+            //   emailSent = await sendEmailsToAmbassadors(
+            //     formName,
+            //     `${queuedTags.length} Tags left in the round were added to the archive`,
+            //     thisGamesAmbassadors,
+            //     (a) => {
+            //       if (a) {
+            //         return {
+            //           tag,
+            //           host,
+            //           logo,
+            //           gameHost,
+            //           region: gameName,
+            //           playerIP,
+            //           currentMysteryImageUrl: currentMysteryTag?.mysteryImageUrl?.length
+            //             ? currentMysteryTag.mysteryImageUrl
+            //             : '',
+            //           mysteryImageUrl: tag?.mysteryImageUrl?.length ? tag.mysteryImageUrl : '',
+            //           foundImageUrl: tag?.foundImageUrl?.length ? tag.foundImageUrl : '',
+            //           goCurrentMystery: 'SEE CURRENT MYSTERY',
+            //           currentMysteryHint: `current hint: "${currentMysteryTag?.hint}"`,
+            //           footerText:
+            //             'BikeTag is an OpenSource project that you can contribute to anytime',
+            //           goToQueueButton: 'GO TO QUEUE',
+            //           newBikeTagPlayedText: 'A new round of BikeTag has been queued!',
+            //           mainTitleText: `this is the ${tagQueuedNumber} tag to be queue for round #${tag?.tagnumber}`,
+            //           mainParagraphText: autoPostEnabled
+            //             ? 'Your game of BikeTag has AutoPost enabled, and the first tag submitted will be chosen as the winner at the end of the AutoPost timer of 15 minutes.'
+            //             : 'You must approve the winning tag before the game can move on to the next round.',
+            //           goToApproveButton: 'Go to the Queue now to approve/dequeue this submission',
+            //           goToWebsiteLink: `or go to ${gameHost}/login`,
+            //           comparisonText: 'FOUND TAG COMPARED TO CURRENT MYSTERY LOCATION',
+            //           foundLocation: 'FOUND HERE',
+            //           foundTagBlurb: `This is what the player [${tag.foundPlayer}] submitted as the found location image and information. If there is a problem with this submission, please go to the Queue to resolve the issue.`,
+            //           currentMysteryBlurb:
+            //             'This is the current mystery location. You can see the full screen image in the app, if you need to, by clicking the button below.',
+            //           ambassadorsUrl: `${gameHost}/queue?btaId=${a.id}`,
+            //           redditLink: `https://reddit.com/r/${
+            //             game.subreddit?.length ? game.subreddit : 'biketag'
+            //           }`,
+            //           blueskyLink: `https://bsky.app/profile/${
+            //             game.bsky?.length ? game.bsky : 'biketag.bsky.social'
+            //           }`,
+            //           // instagramLink: `https://www.reddit.com/r/${game. ?? 'biketag'}`,
+            //         }
+            //       } else {
+            //         return {
+            //           payload: JSON.stringify(payload),
+            //           game: gameName,
+            //           host,
+            //           playerIP,
+            //         }
+            //       }
+            //     },
+            //   )
+            //   successfulEmailsSent = successfulEmailsSent.concat(emailSent.accepted)
+            //   rejectedEmails = rejectedEmails.concat(emailSent.rejected)
+            // }
+            break
+          default:
+          case 'approve-tag-error':
+          case 'post-tag-error':
+            emailSent = await sendEmailsToAmbassadors(
+              formName,
+              `An error has occured for [${game.name}] BikeTag`,
+              thisGamesAmbassadors,
+              () => {
+                return {
+                  payload: JSON.stringify(payload),
+                  host,
+                  game: game.name,
+                  playerIP,
+                  playerID,
+                }
+              },
+            )
+            successfulEmailsSent = successfulEmailsSent.concat(emailSent.accepted)
+            rejectedEmails = rejectedEmails.concat(emailSent.rejected)
+            break
+        }
+      } else {
+        console.log(`Send all emails is disabled. Will not send extra email ${formName}`)
       }
 
       if (successfulEmailsSent.length) {
