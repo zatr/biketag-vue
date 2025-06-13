@@ -678,7 +678,6 @@ export const sendEmailsToAmbassadors = async (
 ): Promise<{ accepted: any[]; rejected: any[] }> => {
   if (!(process.env.G_EMAIL && process.env.G_PASS))
     return Promise.resolve({ accepted: [], rejected: [ErrorMessage.EmailNotConfigured] })
-
   let emailSent
   let accepted = []
   let rejected = []
@@ -1123,9 +1122,8 @@ export const getBikeTagAuth0Profile = async (
     page: 0,
     per_page: 1,
     include_totals: false,
-    fields: `${restrictUserMeta ? 'user_metadata.social,user_metadata.options' : 'user_metadata'}${
-      authorized ? ',sub,user_metadata.name,user_metadata.passcode' : ''
-    }`,
+    fields: `${restrictUserMeta ? 'user_metadata.social,user_metadata.options' : 'user_metadata'}${authorized ? ',sub,user_metadata.name,user_metadata.passcode' : ''
+      }`,
     q: `user_metadata.name:"${name}"`,
     search_engine: 'v3',
   }
@@ -1254,19 +1252,19 @@ export const sendBikeTagPostNotificationToBlueSky = async (
         createdAt: timestamp,
         facets: gameLinkFacet.length
           ? [
-              {
-                index: {
-                  byteStart: gameLinkFacet[0],
-                  byteEnd: gameLinkFacet[1],
-                },
-                features: [
-                  {
-                    $type: 'app.bsky.richtext.facet#link',
-                    uri: link,
-                  },
-                ],
+            {
+              index: {
+                byteStart: gameLinkFacet[0],
+                byteEnd: gameLinkFacet[1],
               },
-            ]
+              features: [
+                {
+                  $type: 'app.bsky.richtext.facet#link',
+                  uri: link,
+                },
+              ],
+            },
+          ]
           : [],
         embed: {
           $type: 'app.bsky.embed.external',
@@ -1477,7 +1475,7 @@ export const sendNewBikeTagNotifications = async (
     )
   }
 
-  if (!skipEmails) {
+  if (!skipEmails && (game.settings['emails::disable']?.indexOf('new-biketag-notification') !== -1)) {
     // console.log('emailing', { thisGamesAmbassadors })
     notificationPromises.push(
       sendEmailsToAmbassadors(
@@ -1509,6 +1507,8 @@ export const sendNewBikeTagNotifications = async (
         return results.accepted.concat(results.rejected)
       }),
     )
+  } else {
+    console.log('Send all emails is disabled. Will not send extra email biketag-auto-posted')
   }
 
   return notificationPromises
