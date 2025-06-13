@@ -257,8 +257,8 @@ export const handler = async (event) => {
               () => {
                 return {
                   payload: JSON.stringify(payload),
+                  game: gameName,
                   host,
-                  game: game.name,
                   playerIP,
                   playerID,
                 }
