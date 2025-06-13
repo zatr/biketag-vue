@@ -60,6 +60,7 @@ export const autoNotifyNewBikeTagPosted = async (event): Promise<BackgroundProce
     winningTag,
     nonAdminBiketag,
     payloadOpts.skipEmails,
+    payloadOpts.skipSocials,
   ).catch((err) => {
     console.log('error sending notifications', err)
   })
