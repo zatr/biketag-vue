@@ -31,6 +31,8 @@
         <p>{{ $t('pages.howto.swiper1.text5') }}</p>
         <br />
         <p>{{ $t('pages.howto.swiper1.text6') }}</p>
+        <br />
+        <p>{{ $t('pages.howto.swiper1.text7') }}</p>
       </swiper-slide>
       <swiper-slide>
         <p>{{ $t('pages.howto.swiper2.text1') }}</p>
