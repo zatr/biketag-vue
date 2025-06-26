@@ -202,7 +202,7 @@ async function onQueueSubmit(newTagSubmission) {
   if (alreadyUploaded) {
     const uploadedDate = new Date(alreadyUploaded)
 
-    if (uploadedDate + (60 * 1000) < new Date().getTime()) {
+    if (uploadedDate + (60 * 1000) > new Date().getTime()) {
       window.scrollTo(0, 0)
       toast.open({
         message: t('notifications.already-uploaded'),
