@@ -169,6 +169,7 @@ const isSubmittingData = () =>
     getFormStep.value === BiketagQueueFormSteps[BiketagQueueFormSteps.queuePostedShare]
   )
 async function onQueueSubmit(newTagSubmission) {
+  let isFoundTag = true
   const ipAddress = await publicIp()
   const bannedIPs = await getBannedIPs()
 
@@ -192,6 +193,26 @@ async function onQueueSubmit(newTagSubmission) {
   }
 
   const { tag, formAction, formData, storeAction } = newTagSubmission
+  
+  if (!tag.foundImage) {
+      isFoundTag = false
+  }
+
+  const alreadyUploaded = localStorage.getItem(`${getGameName.value}-${getCurrentBikeTag.value.tagnumber}${isFoundTag ? '--found' : '--mystery'}::posted`)
+  if (alreadyUploaded) {
+    const uploadedDate = new Date(alreadyUploaded)
+
+    if (uploadedDate + (60 * 1000) > new Date().getTime()) {
+      window.scrollTo(0, 0)
+      toast.open({
+        message: t('notifications.already-uploaded'),
+        type: 'error',
+        position: 'top',
+      })      
+      return
+    }
+  }
+
   if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual'
   }
@@ -227,6 +248,9 @@ async function onQueueSubmit(newTagSubmission) {
     } else if (tag.mysteryImage) {
       formData.set('mysteryImageUrl', getPlayerTag.value.mysteryImageUrl)
     }
+
+    localStorage.setItem(`${getGameName.value}-${getCurrentBikeTag.value.tagnumber}${isFoundTag ? '--found' : '--mystery'}::posted`, new Date().getTime())
+
     return sendNetlifyForm(
       formAction,
       new URLSearchParams(formData).toString(),
