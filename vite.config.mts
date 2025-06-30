@@ -12,12 +12,13 @@ const host = process.env.HOST ?? BikeTagDefaults.host
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
-    alias: [
-      {
-        find: '@',
-        replacement: path.resolve(__dirname, 'src'),
-      },
-    ],
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      './runtimeConfig': './runtimeConfig.browser',
+      '@aws-sdk/crc64-nvme-crt': '/src/empty.js',
+      '@aws-sdk/signature-v4-crt': '/src/empty.js',
+      '@aws-sdk/signature-v4a': '/src/empty.js',
+    },
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
   css: {

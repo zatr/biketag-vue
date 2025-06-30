@@ -158,6 +158,7 @@ const getProfile = computed(() => store.getProfile)
 const getGameName = computed(() => store.getGameName)
 const getPlayerId = computed(() => store.getPlayerId)
 const getPlayerName = computed(() => store.getPlayerName)
+const getGameNotices = computed(() => store.getGameNotices)
 
 // methods
 const isViewingQueue = () =>
@@ -202,13 +203,21 @@ async function onQueueSubmit(newTagSubmission) {
   if (alreadyUploaded) {
     const uploadedDate = new Date(alreadyUploaded)
 
-    if (uploadedDate + (60 * 1000) > new Date().getTime()) {
+    const uploadDelay = getGameNotices.value ? getGameNotices.value.imgurDelay : 1
+    if (uploadedDate + (60 * 1000 * uploadDelay) > new Date().getTime()) {
       window.scrollTo(0, 0)
       toast.open({
         message: t('notifications.already-uploaded'),
         type: 'error',
         position: 'top',
       })      
+      if (getGameNotices.value?.imgurDelayNotice) {
+        toast.open({
+          message: getGameNotices.value.imgurDelayNotice,
+          type: 'error',
+          position: 'top',
+        })  
+      }
       return
     }
   }

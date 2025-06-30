@@ -114,6 +114,10 @@ export const getBikeTagClientOpts = (win?: Window, withToken = false) => {
       projectId: process.env.S_PID,
       dataset: process.env.S_DSET,
     },
+    aws: {
+      accessKeyId: process.env.S3_AID,
+      secretAccessKey: process.env.S3_AKEY,
+    }
   }
 }
 

@@ -73,6 +73,9 @@ export const BikeTagEnv = {
   S_DSET: process.env.S_DSET ?? process.env.SANITY_DATASET ?? null,
   S_PID: process.env.S_PID ?? process.env.SANITY_PROJECT_ID ?? null,
   S_TOKEN: process.env.S_TOKEN ?? process.env.SANITY_ACCESS_TOKEN ?? null,
+  /* AWS S3 Configuration */
+  S3_AID: process.env.S3_AID ?? process.env.S3_ACCESS_ID ?? null,
+  S3_AKEY: process.env.S3_AKEY ?? process.env.S3_ACCESS_KEY ?? null,
 }
 
 export const special = [
