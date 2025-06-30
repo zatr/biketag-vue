@@ -214,6 +214,7 @@ async function onQueueSubmit(newTagSubmission) {
       })
       if (getGameNotices.value?.imgurDelayNotice) {
         toast.open({
+          duration: 10000,
           message: getGameNotices.value.imgurDelayNotice,
           type: 'error',
           position: 'top',
