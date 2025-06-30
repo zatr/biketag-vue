@@ -203,11 +203,12 @@ async function onQueueSubmit(newTagSubmission) {
     `${getGameName.value}-${getCurrentBikeTag.value.tagnumber}${isFoundTag ? '--found' : '--mystery'}::posted`,
   )
   if (alreadyUploaded) {
+    const alreadyUploadedTime = parseInt(alreadyUploaded)
     const uploadDelay = getGameNotices.value?.imgurDelay ?? 1
     const delayMultiplier = Number.isNaN(parseInt(uploadDelay, 10)) ? 1 : parseInt(uploadDelay, 10)
     const delayMs = delayMultiplier * 60 * 1000
 
-    if (Date.now() - alreadyUploaded >= delayMs) {
+    if (Date.now() - alreadyUploadedTime >= delayMs) {
       window.scrollTo(0, 0)
       toast.open({
         message: t('notifications.already-uploaded'),
