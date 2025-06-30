@@ -205,7 +205,9 @@ async function onQueueSubmit(newTagSubmission) {
   if (alreadyUploaded) {
     const uploadDelay = getGameNotices.value?.imgurDelay ?? 1
     const delayMultiplier = Number.isNaN(parseInt(uploadDelay, 10)) ? 1 : parseInt(uploadDelay, 10)
-    if (alreadyUploaded + 60 * 1000 * delayMultiplier > new Date().getTime()) {
+    const delayMs = delayMultiplier * 60 * 1000
+
+    if (Date.now() - alreadyUploaded >= delayMs) {
       window.scrollTo(0, 0)
       toast.open({
         message: t('notifications.already-uploaded'),
