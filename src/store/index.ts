@@ -197,7 +197,8 @@ export const useBikeTagStore = defineStore(BikeTagDefaults.store, {
             const game = r.data as Game
             biketagClientOpts.imgur.hash = game.mainhash
             biketagClientOpts.imgur.queuehash = game.queuehash
-            client.config(biketagClientOpts)
+            biketagClientOpts.aws.region = game.awsRegion
+            client.config(biketagClientOpts, true, true)
 
             return this.SET_GAME(game)
           } else {
@@ -1034,6 +1035,12 @@ export const useBikeTagStore = defineStore(BikeTagDefaults.store, {
     },
     getProfile(state) {
       return state.profile
+    },
+    getGameNotices(state) {
+      return {
+        imgurDelayNotice: process.env.IMGUR_DELAY_NOTICE,
+        imgurDelay: process.env.IMGUR_DELAY,
+      }
     },
     isBikeTagAmbassador(state) {
       return state.profile?.isBikeTagAmbassador
