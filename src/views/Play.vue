@@ -194,29 +194,32 @@ async function onQueueSubmit(newTagSubmission) {
   }
 
   const { tag, formAction, formData, storeAction } = newTagSubmission
-  
+
   if (!tag.foundImage) {
-      isFoundTag = false
+    isFoundTag = false
   }
 
-  const alreadyUploaded = localStorage.getItem(`${getGameName.value}-${getCurrentBikeTag.value.tagnumber}${isFoundTag ? '--found' : '--mystery'}::posted`)
+  const alreadyUploaded = localStorage.getItem(
+    `${getGameName.value}-${getCurrentBikeTag.value.tagnumber}${isFoundTag ? '--found' : '--mystery'}::posted`,
+  )
   if (alreadyUploaded) {
     const uploadedDate = new Date(alreadyUploaded)
 
-    const uploadDelay = getGameNotices.value ? getGameNotices.value.imgurDelay : 1
-    if (uploadedDate + (60 * 1000 * uploadDelay) > new Date().getTime()) {
+    const uploadDelay = getGameNotices.value?.imgurDelay ?? 1
+    const delayMultiplier = typeof uploadDelay === 'number' && uploadDelay > 0 ? uploadDelay : 1
+    if (uploadedDate + 60 * 1000 * delayMultiplier > new Date().getTime()) {
       window.scrollTo(0, 0)
       toast.open({
         message: t('notifications.already-uploaded'),
         type: 'error',
         position: 'top',
-      })      
+      })
       if (getGameNotices.value?.imgurDelayNotice) {
         toast.open({
           message: getGameNotices.value.imgurDelayNotice,
           type: 'error',
           position: 'top',
-        })  
+        })
       }
       return
     }
@@ -258,7 +261,10 @@ async function onQueueSubmit(newTagSubmission) {
       formData.set('mysteryImageUrl', getPlayerTag.value.mysteryImageUrl)
     }
 
-    localStorage.setItem(`${getGameName.value}-${getCurrentBikeTag.value.tagnumber}${isFoundTag ? '--found' : '--mystery'}::posted`, new Date().getTime())
+    localStorage.setItem(
+      `${getGameName.value}-${getCurrentBikeTag.value.tagnumber}${isFoundTag ? '--found' : '--mystery'}::posted`,
+      new Date().getTime(),
+    )
 
     return sendNetlifyForm(
       formAction,

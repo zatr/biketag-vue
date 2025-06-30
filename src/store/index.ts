@@ -255,8 +255,6 @@ export const useBikeTagStore = defineStore(BikeTagDefaults.store, {
       const initResults: any[] = []
       this.fetchingData = true
 
-      debugger;
-
       if (!opts.skipCurrentBikeTag) {
         if (opts.currentBikeTagSync) initResults.push(await this.fetchCurrentBikeTag())
         else initResults.push(this.fetchCurrentBikeTag())
@@ -322,7 +320,6 @@ export const useBikeTagStore = defineStore(BikeTagDefaults.store, {
       })
     },
     fetchTags(cached = true) {
-      debugger
       return client.tags({ cached }).then(this.SET_TAGS)
     },
     fetchQueuedTag(d: any) {
