@@ -76,6 +76,8 @@ export const BikeTagEnv = {
   /* AWS S3 Configuration */
   S3_AID: process.env.S3_AID ?? process.env.S3_ACCESS_ID ?? null,
   S3_AKEY: process.env.S3_AKEY ?? process.env.S3_ACCESS_KEY ?? null,
+  IMGUR_DELAY_NOTICE: process.env.IMGUR_DELAY_NOTICE,
+  IMGUR_DELAY: process.env.IMGUR_DELAY,
 }
 
 export const special = [
